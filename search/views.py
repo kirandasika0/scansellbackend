@@ -9,7 +9,7 @@ def home(reqeust):
     
 
 @csrf_exempt
-def test(reqeust):
+def test_view(reqeust):
     if request.method == 'POST':
         name = request.POST.get('name', "")
         return HttpResponse(json.dumps({'response': name}), content_type="application/json")
