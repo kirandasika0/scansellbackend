@@ -2,15 +2,31 @@ from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 import json
+from .models import Book
 
 def home(request):
     return HttpResponse("Welcome", content_type="application/json")
     
     
 @csrf_exempt
-def test(request):
+def insert_book(request):
     if request.method == 'POST':
-        name = request.POST.get('name', "")
-        return HttpResponse("Your name is" + name)
+        full_title = request.POST.get('full_title', "")
+        link = request.POST.get('link', "")
+        uniform_title = request.POST.get('uniform_title', "")
+        if len(full_title) > 0 and len(link) > 0 and len(uniform_title) > 0:
+            try:
+                #insert the book into the database
+                #Book.objects.create(full_title=full_title, link=link, uniform_title=uniform_title)
+                return HttpResponse(json.dumps({'response': 'inserted'}), content_type="application/json")
+            except:
+                print "shit"
+                return HttpResponse(json.dumps({'response': 'looks like there was a problem entering it'}), 
+                                    content_type="application/json")
+        else:
+            return HttpResponse(json.dumps({'response': 'looks like there is no data'}),
+                                content_type="application/json")
+                                
     else:
-        return HttpResponse("Please send the correct request")
+        return HttpResponse(json.dumps({'response': 'send correct request'}),
+                            content_type="application/json")
