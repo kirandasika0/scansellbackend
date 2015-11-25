@@ -11,8 +11,6 @@ def home(request):
 def test(request):
     if request.method == 'POST':
         name = request.POST.get('name', "")
-        return HttpResponse(json.dumps({'response': name}), content_type="application/json")
+        return HttpResponse("Your name is" + name)
     else:
-        return HttpResponse(json.dumps({'response': 'Please send the correct request'}),
-                            content_type="application/json")
-                            
+        return HttpResponse("Please send the correct request")
