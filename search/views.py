@@ -17,7 +17,7 @@ def insert_book(request):
         if len(full_title) > 0 and len(link) > 0 and len(uniform_title) > 0:
             try:
                 #insert the book into the database
-                #Book.objects.create(full_title=full_title, link=link, uniform_title=uniform_title)
+                Book.objects.create(full_title=full_title, link=link, uniform_title=uniform_title)
                 return HttpResponse(json.dumps({'response': 'inserted'}), content_type="application/json")
             except:
                 print "shit"
