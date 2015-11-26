@@ -30,3 +30,14 @@ def insert_book(request):
     else:
         return HttpResponse(json.dumps({'response': 'send correct request'}),
                             content_type="application/json")
+                            
+                            
+@csrf_exempt
+def new_search(request):
+    if request.method == 'POST':
+        search_string = request.POST.get('search_string', "")
+        return HttpResponse(json.dumps({'response': search_string}),
+                            content_type="application/json")
+    else:
+        return HttpResponse(json.dumps({'response': 'Please send the correct response'}),
+                            content_type="application/json")
