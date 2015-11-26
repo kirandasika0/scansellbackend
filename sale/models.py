@@ -21,7 +21,7 @@ class Sale(models.Model):
 class SaleInterest(models.Model):
     interested_user_id = models.CharField(max_length=500)
     interested_username = models.CharField(max_length=500)
-    sale_id = models.ForeignKey('Sale')
+    sale = models.ForeignKey('Sale')
     created_at = models.DateTimeField(auto_now_add=True)
     
     
