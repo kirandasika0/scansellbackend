@@ -8,6 +8,18 @@ import json
 def home(request):
     return HttpResponse("Welcome to the Sale Model App")
     
+    
+#simple title case string view for better type face on app
+@csrf_exempt
+def title_case_string(request):
+    if request.method == 'POST':
+        string = request.POST.get('string', "")
+        return HttpResponse(json.dumps({'string': string.title()}),
+                            content_type="application/json")
+    else:
+        return HttpResponse(json.dumps({'response': 'please send the correct request'}),
+                            content_type="application/json")
+    
 @csrf_exempt
 def new_sale(request):
     if request.method == 'POST':
