@@ -41,7 +41,7 @@ def new_sale(request):
             full_title = request.POST.get('full_title', "")
             link = ""
             uniform_title = request.POST.get('uniform_title', "")
-            ean_13 = request.POST.get('ean_13', "")
+            ean_13 = request.POST.get('barcode_number', "")
             new_book = Book.objects.create(full_title=full_title,
                                             link=link,
                                             uniform_title=uniform_title,
