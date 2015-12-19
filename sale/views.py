@@ -114,6 +114,7 @@ def sale_notification(request):
                         content_type="application/json")
                         
                         
+
 @csrf_exempt
 def create_locale(request):
     if request.method == 'POST':
@@ -125,6 +126,10 @@ def create_locale(request):
         response = json.loads(requests.get(url).content)
         #getting the info that we need.
         for obj in response["results"][0]["adddress_components"]:
+            if "route" in obj["types"]:
+                locale.append(obj["long_name"])
+            if "administrative_area_level_3" in obj["types"]:
+                locale.append(obj["long_name"])
             if "locality" in obj["types"]:
                 locale.append(obj["long_name"])
             if "administrative_area_level_2" in obj["types"]:
