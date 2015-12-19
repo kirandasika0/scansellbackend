@@ -35,51 +35,41 @@ def new_sale(request):
         description = request.POST.get('description', "")
         price = request.POST.get('price', "")
         if book_id:
-            if Book.objects.get(pk=book_id).exists():
-                #the book that the user wants to sell is available
-                book = Book.objects.get(pk=book_id)
-                #creating a new sale for the book that the user has chosen
-                Sale.objects.create(seller_id=seller_id, seller_username=seller_username,
-                                    book=book, description=description, price=price,
-                                    location=location)
-                return HttpResponse(json.dumps({'response': 'Your sale has been created'}),
-                                    content_type="application/json")
-            else:
-                #book is not there please enter the details of the book
-                #sending message back to client for uploading contents of book
-                #getting the required data
-                full_title = request.POST.get('full_title', "")
-                link = ""
-                uniform_title = request.POST.get('uniform_title', "")
-                ean_13 = request.POST.get('ean_13', "")
-                new_book = Book.objects.create(full_title=full_title,
-                                                link=link,
-                                                uniform_title=uniform_title,
-                                                ean_13=ean_13)
-                new_book.save()
-                #the book is now saved we have to save the sale and enter it in 
-                #the correct redis bucket for the user
-                sale = Sale.objects.create(seller_id=seller_id, seller_username=seller_username,
-                                    book=new_book, description=description, price=price,
-                                    location=location)
-                sale.save()
-                #we have to create the images
-                #front cover image
-                front_cover_image = request.POST.get('front_cover_image', "")
-                first_cover_image = request.POST.get('first_cover_image', "")
-                back_cover_image = request.POST.get('back_cover_image', "")
-                #saving all the sale images
-                img_names = [front_cover_image, first_cover_image, back_cover_image]
-                #img types
-                img_types = ['front', 'first', 'back']
-                imgs = zip(img_types, img_names)
-                for img in imgs:
-                    SaleImage.objects.create(sale=sale, img_type=img[0],
-                                            image_name=img[1])
-                                
-                response = {'response': 'Your Sale has been created'}
-                return HttpResponse(json.dumps(response), 
-                                    content_type="application/json")
+            #book is not there please enter the details of the book
+            #sending message back to client for uploading contents of book
+            #getting the required data
+            full_title = request.POST.get('full_title', "")
+            link = ""
+            uniform_title = request.POST.get('uniform_title', "")
+            ean_13 = request.POST.get('ean_13', "")
+            new_book = Book.objects.create(full_title=full_title,
+                                            link=link,
+                                            uniform_title=uniform_title,
+                                            ean_13=ean_13)
+            new_book.save()
+            #the book is now saved we have to save the sale and enter it in 
+            #the correct redis bucket for the user
+            sale = Sale.objects.create(seller_id=seller_id, seller_username=seller_username,
+                                book=new_book, description=description, price=price,
+                                location=location)
+            sale.save()
+            #we have to create the images
+            #front cover image
+            front_cover_image = request.POST.get('front_cover_image', "")
+            first_cover_image = request.POST.get('first_cover_image', "")
+            back_cover_image = request.POST.get('back_cover_image', "")
+            #saving all the sale images
+            img_names = [front_cover_image, first_cover_image, back_cover_image]
+            #img types
+            img_types = ['front', 'first', 'back']
+            imgs = zip(img_types, img_names)
+            for img in imgs:
+                SaleImage.objects.create(sale=sale, img_type=img[0],
+                                        image_name=img[1])
+                            
+            response = {'response': 'Your Sale has been created'}
+            return HttpResponse(json.dumps(response), 
+                                content_type="application/json")
     else:
         return HttpResponse(json.dumps({'response': 'please send the correct request'}),
                             content_type="application/json")
