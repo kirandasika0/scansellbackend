@@ -125,7 +125,7 @@ def create_locale(request):
         url = "http://maps.googleapis.com/maps/api/geocode/json?latlng=" + latitude + "," + longitude
         response = json.loads(requests.get(url).content)
         #getting the info that we need.
-        for obj in response["results"][0]["adddress_components"]:
+        for obj in response["results"][0]["address_components"]:
             if "route" in obj["types"]:
                 locale.append(obj["long_name"])
             if "administrative_area_level_3" in obj["types"]:
