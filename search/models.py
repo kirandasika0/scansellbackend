@@ -4,7 +4,8 @@ class Book(models.Model):
     full_title = models.TextField()
     link = models.TextField()
     uniform_title = models.TextField()
-    ean_13 = models.CharField(max_length=300, default='')
+    #it's the same as the isbn number - metadata purpose
+    ean_13 = models.CharField(max_length=300, default='') 
     
     def __str__(self):
         return self.uniform_title

@@ -8,6 +8,7 @@ class Sale(models.Model):
     book = models.ForeignKey('search.Book')
     description = models.TextField()
     price = models.CharField(max_length=200)
+    location = models.CharField(default='', max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
@@ -30,4 +31,31 @@ class SaleInterest(models.Model):
         
     class Meta:
         ordering = ['-created_at']
+    
+class SaleImage(models.Model):
+    sale = models.ForeignKey('Sale')
+    image_name = models.TextField()
+    pub_date = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['-pub_date']
+        
+    def __str__(self):
+        return self.image_name
+        
+# class SaleNotification(models.Model):
+#     ''' This is the main sale notification model to talk to the database'''
+#     notif_type = models.IntegerField()
+#     user_id = models.CharField(max_length='255')
+#     user_name = models.CharField(max_length='255')
+#     sale = models.ForeignKey('Sale')
+#     data = models.TextField()
+#     pub_date = models.DateTimeField(auto_now_add=True)
+    
+    
+#     class Meta:
+#         ordering = ['pub_date']
+        
+#     def __str__(self):
+#         return self.user_name
     

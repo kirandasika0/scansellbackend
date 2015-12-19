@@ -6,4 +6,6 @@ urlpatterns = [
     url(r'^title_case_string/', views.title_case_string),
     url(r'^new_sale_interest/', views.new_sale_interest),
     url(r'^new_sale_insert/', views.new_sale_insert),
+    url(r'^redis_test/', views.redis_test),
+    url(r'^create_locale/', views.create_locale),
 ]

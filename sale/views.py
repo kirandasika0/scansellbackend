@@ -3,7 +3,12 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import Sale, SaleInterest
 from search.models import Book
-import json
+import json, requests
+import redis
+# creating a new redis server
+r = redis.Redis(host='pub-redis-18592.us-east-1-2.4.ec2.garantiadata.com',
+                port=18592,
+                password='kiran@cr7')
 # Create your views here.
 def home(request):
     return HttpResponse("Welcome to the Sale Model App")
@@ -26,19 +31,38 @@ def new_sale(request):
         seller_id   = request.POST.get('seller_id', "")
         seller_username = request.POST.get('seller_username', "")
         book_id = request.POST.get('book_id', "")
+        location = request.POST.get('location', "")
         description = request.POST.get('description', "")
         price = request.POST.get('price', "")
-        if book_id != 0:
+        if book_id:
             if Book.objects.get(pk=book_id).exists():
                 #the book that the user wants to sell is available
                 book = Book.objects.get(pk=book_id)
                 #creating a new sale for the book that the user has chosen
                 Sale.objects.create(seller_id=seller_id, seller_username=seller_username,
-                                    book=book, description=description, price=price)
+                                    book=book, description=description, price=price,
+                                    location=location)
+                return HttpResponse(json.dumps({'response': 'Your sale has been created'}),
+                                    content_type="application/json")
             else:
                 #book is not there please enter the details of the book
                 #sending message back to client for uploading contents of book
-                response = {'response': 3}
+                #getting the required data
+                full_title = request.POST.get('full_title', "")
+                link = ""
+                uniform_title = request.POST.get('uniform_title', "")
+                ean_13 = request.POST.get('ean_13', "")
+                new_book = Book.objects.create(full_title=full_title,
+                                                link=link,
+                                                uniform_title=uniform_title,
+                                                ean_13=ean_13)
+                new_book.save()
+                #the book is now saved we have to save the sale and enter it in 
+                #the correct redis bucket for the user
+                Sale.objects.create(seller_id=seller_id, seller_username=seller_username,
+                                    book=new_book, description=description, price=price,
+                                    location=location)
+                response = {'response': 'Your Sale has been created'}
                 return HttpResponse(json.dumps(response), 
                                     content_type="application/json")
     else:
@@ -76,4 +100,40 @@ def new_sale_insert(request):
                             content_type="application/json")
     else:
         return HttpResponse(json.dumps({'response': 'Please send the correct request'}),
+                            content_type="application/json")
+                            
+                            
+def redis_test(request):
+    return HttpResponse("redis cache")
+    
+
+@csrf_exempt
+def sale_notification(request):
+    """ All main sale notification will be sent from this view """
+    return HttpResponse(json.dumps({'response': 'send the appropriate request'}),
+                        content_type="application/json")
+                        
+                        
+@csrf_exempt
+def create_locale(request):
+    if request.method == 'POST':
+        locale = []
+        latitude = request.POST.get('latitude', "")
+        longitude = request.POST.get('longitude', "")
+        #sending request to google to create locale
+        url = "http://maps.googleapis.com/maps/api/geocode/json?latlng=" + latitude + "," + longitude
+        response = json.loads(requests.get(url).content)
+        #getting the info that we need.
+        for obj in response["results"][0]["adddress_components"]:
+            if "locality" in obj["types"]:
+                locale.append(obj["long_name"])
+            if "administrative_area_level_2" in obj["types"]:
+                locale.append(obj["long_name"])
+            if "administrative_area_level_1" in obj["types"]:
+                locale.append(obj["short_name"])
+        return_response = ','.join(locale).upper()
+        return HttpResponse(json.dumps({'response': return_response}),
+                            content_type="application/json")
+    else:
+        return HttpResponse(json.dumps({'response': 'please send the correct request'}), 
                             content_type="application/json")

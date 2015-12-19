@@ -39,5 +39,5 @@ def new_search(request):
         return HttpResponse(json.dumps({'response': search_string}),
                             content_type="application/json")
     else:
-        return HttpResponse(json.dumps({'response': 'Please send the correct response'}),
+        return HttpResponse(json.dumps({'response': 'please send the correct request'}),
                             content_type="application/json")
