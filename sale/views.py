@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from .models import Sale, SaleInterest
+from .models import Sale, SaleInterest, SaleImage
 from search.models import Book
 import json, requests
 import redis
@@ -59,9 +59,24 @@ def new_sale(request):
                 new_book.save()
                 #the book is now saved we have to save the sale and enter it in 
                 #the correct redis bucket for the user
-                Sale.objects.create(seller_id=seller_id, seller_username=seller_username,
+                sale = Sale.objects.create(seller_id=seller_id, seller_username=seller_username,
                                     book=new_book, description=description, price=price,
                                     location=location)
+                sale.save()
+                #we have to create the images
+                #front cover image
+                front_cover_image = request.POST.get('front_cover_image', "")
+                first_cover_image = request.POST.get('first_cover_image', "")
+                back_cover_image = request.POST.get('back_cover_image', "")
+                #saving all the sale images
+                img_names = [front_cover_image, first_cover_image, back_cover_image]
+                #img types
+                img_types = ['front', 'first', 'back']
+                imgs = zip(img_types, img_names)
+                for img in imgs:
+                    SaleImage.objects.create(sale=sale, img_type=img[0],
+                                            image_name=img[1])
+                                
                 response = {'response': 'Your Sale has been created'}
                 return HttpResponse(json.dumps(response), 
                                     content_type="application/json")
