@@ -9,6 +9,7 @@ class Sale(models.Model):
     description = models.TextField()
     price = models.CharField(max_length=200)
     location = models.CharField(default='', max_length=255)
+    geo_point = models.CharField(default='', max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):

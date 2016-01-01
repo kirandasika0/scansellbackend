@@ -34,6 +34,9 @@ def new_sale(request):
         location = request.POST.get('location', "")
         description = request.POST.get('description', "")
         price = request.POST.get('price', "")
+        latitude = request.POST.get('latitude', "")
+        longitude = request.POST.get('longitude', "")
+        geo_point = latitude + "," + longitude
         if book_id:
             #book is not there please enter the details of the book
             #sending message back to client for uploading contents of book
@@ -51,7 +54,7 @@ def new_sale(request):
             #the correct redis bucket for the user
             sale = Sale.objects.create(seller_id=seller_id, seller_username=seller_username,
                                 book=new_book, description=description, price=price,
-                                location=location)
+                                location=location, geo_point=geo_point)
             sale.save()
             #we have to create the images
             #front cover image
@@ -122,6 +125,10 @@ def sale_notification(request):
 
 @csrf_exempt
 def create_locale(request):
+    ''' This view creates the address for the sale. 
+        Address format: 
+        Route, Admininstrative Area Level 3 , Locality, Admininstrative Area Level 2, Admininstrative Level 1,
+        State'''
     if request.method == 'POST':
         locale = []
         latitude = request.POST.get('latitude', "")
@@ -146,4 +153,15 @@ def create_locale(request):
                             content_type="application/json")
     else:
         return HttpResponse(json.dumps({'response': 'please send the correct request'}), 
+                            content_type="application/json")
+                            
+                            
+@csrf_exempt
+def get_feed(request):
+    if request.method == 'GET':
+        #get all the posts from the data base
+        sales = Sale.objects.all()
+        return HttpResponse(sales, content_type="application/json")
+    else:
+        return HttpResponse(json.dumps({'response': 'Please send the correct request'}),
                             content_type="application/json")
