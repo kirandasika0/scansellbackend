@@ -50,7 +50,7 @@ def generate_feed(user_id):
         latitude, longitude = sale.geo_point.split(',')
         product_data = {'id': sale.id, 'seller_id': sale.seller_id,
                         'seller_username': sale.seller_username,
-                        'book': serializers.serialize("json", [Book.objects.get(pk=sale.book_id)])[1:-1],
+                        'book': sale.book.id,
                         'price': sale.price,
                         'location': sale.location,
                         'latitude': latitude,
