@@ -164,7 +164,8 @@ def get_feed(request):
         #get all the posts from the data base
         user_id = request.GET.get('user_id', "")
         data = generate_feed(user_id)
-        return HttpResponse(data, content_type="application/json")
+        response = {'response': data}
+        return HttpResponse(json.dumps(response), content_type="application/json")
     else:
         return HttpResponse(json.dumps({'response': 'Please send the correct request'}),
                             content_type="application/json")
