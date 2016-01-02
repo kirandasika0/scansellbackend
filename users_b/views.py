@@ -19,7 +19,7 @@ def create_user(request):
                                         email=email, mobile_number=mobile_number,
                                         locale=locale, redis_key=redis_key)
             user.save()
-            return HttpResponse(json.dumps({'response': 'user has been created'}),
+            return HttpResponse(json.dumps({'response': 'true'}),
                                 content_type="application/json")
         else:
             return HttpResponse(json.dumps({'response': 'there was a problem in creating the user'}),
