@@ -162,7 +162,7 @@ def create_locale(request):
 def get_feed(request):
     if request.method == 'GET':
         #get all the posts from the data base
-        user_id = request.POST.get('user_id', "")
+        user_id = request.GET.get('user_id', "")
         data = generate_feed(user_id)
         return HttpResponse(data, content_type="application/json")
     else:
