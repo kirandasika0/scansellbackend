@@ -5,6 +5,7 @@ from .models import Sale, SaleInterest, SaleImage
 from search.models import Book
 import json, requests
 import redis
+from feed import generate_feed
 from django.core import serializers
 # creating a new redis server
 r = redis.Redis(host='pub-redis-18592.us-east-1-2.4.ec2.garantiadata.com',
@@ -161,8 +162,9 @@ def create_locale(request):
 def get_feed(request):
     if request.method == 'GET':
         #get all the posts from the data base
-        sales = serializers.serialize("json", Sale.objects.all())
-        return HttpResponse(sales, content_type="application/json")
+        user_id = request.POST.get('user_id', "")
+        data = generate_feed(user_id)
+        return HttpResponse(data, content_type="application/json")
     else:
         return HttpResponse(json.dumps({'response': 'Please send the correct request'}),
                             content_type="application/json")
