@@ -3,6 +3,7 @@ from .models import Sale
 from users_b.models import User
 from django.core import serializers
 from search.models import Book
+import json
 #Creating new redis server
 r = redis.Redis(host='pub-redis-18592.us-east-1-2.4.ec2.garantiadata.com',
                 port=18592,
@@ -50,7 +51,7 @@ def generate_feed(user_id):
         latitude, longitude = sale.geo_point.split(',')
         product_data = {'id': sale.id, 'seller_id': sale.seller_id,
                         'seller_username': sale.seller_username,
-                        'book': serializers.serialize("json", [sale.book])[1:-1],
+                        'book': json.loads(serializers.serialize("json", [sale.book])[1:-1]),
                         'price': sale.price,
                         'location': sale.location,
                         'latitude': latitude,
