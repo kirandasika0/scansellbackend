@@ -54,7 +54,6 @@ def generate_feed(user_id):
                         'price': sale.price,
                         'location': sale.location,
                         'latitude': latitude,
-                        'longitude': longitude,
-                        'pub_date': sale.created_at}
+                        'longitude': longitude}
         serialized_data.append(product_data)
     return serialized_data
