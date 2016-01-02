@@ -1,5 +1,5 @@
 import redis
-from .models import Sale
+from .models import Sale, SaleImage
 from users_b.models import User
 from django.core import serializers
 from search.models import Book
@@ -55,6 +55,8 @@ def generate_feed(user_id):
                         'price': sale.price,
                         'location': sale.location,
                         'latitude': latitude,
-                        'longitude': longitude}
+                        'longitude': longitude,
+                        'images': json.loads(serializers.serialize("json", [SaleImage.objects.get(pk=sale.id)])[1:-1])
+                        }
         serialized_data.append(product_data)
     return serialized_data
