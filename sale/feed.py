@@ -55,8 +55,7 @@ def generate_feed(user_id):
                         'price': sale.price,
                         'location': sale.location,
                         'latitude': latitude,
-                        'longitude': longitude,
-                        'images': json.loads(serializers.serialize("json", [SaleImage.objects.get(pk=sale.id)])[1:-1])
+                        'longitude': longitude
                         }
         serialized_data.append(product_data)
     return serialized_data
