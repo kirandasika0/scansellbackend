@@ -57,7 +57,8 @@ def generate_feed(user_id):
                         'location': sale.location,
                         'latitude': latitude,
                         'longitude': longitude,
-                        'images': json.loads(images)
+                        'images': json.loads(images),
+                        'extra_info': determine_relation(user_locale, sale.location)
                         }
         serialized_data.append(product_data)
     return serialized_data
@@ -69,5 +70,13 @@ def determine_relation(user_locale, sale_locale):
     matches = 1
     common_grounds = []
     for loc in user_locale:
-        pass
-    return None
+        if loc in sale_locale:
+            matches += 1
+            common_grounds.append(loc)
+            
+    common_grounds = [cg.title() for cg in common_grounds]
+    
+    if matches >=3:
+        relation_string = ','.join(common_grounds)
+        relation_string = "Common grounds: " + relation_string
+    return relation_string
