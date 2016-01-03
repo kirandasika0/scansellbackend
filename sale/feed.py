@@ -26,6 +26,7 @@ def place_sale(sale, locale):
 def generate_feed(user_id):
     user_id = str(user_id)
     user = User.objects.filter(user_id=user_id)[0]
+    user_locale_list = user.locale
     user_locale = user.locale.split(',')
     #reversing the list
     user_locale.reverse()
@@ -58,7 +59,7 @@ def generate_feed(user_id):
                         'latitude': latitude,
                         'longitude': longitude,
                         'images': json.loads(images),
-                        'extra_info': determine_relation(user_locale, sale.location)
+                        'extra_info': determine_relation(user_locale_list, sale.location)
                         }
         serialized_data.append(product_data)
     return serialized_data
