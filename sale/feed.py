@@ -57,8 +57,17 @@ def generate_feed(user_id):
                         'location': sale.location,
                         'latitude': latitude,
                         'longitude': longitude,
-                        'images': json.loads(images),
-                        'pub_date': sale.created_at
+                        'images': json.loads(images)
                         }
         serialized_data.append(product_data)
     return serialized_data
+    
+    
+def determine_relation(user_locale, sale_locale):
+    user_locale = user_locale.split(',')
+    sale_locale = sale_locale.split(',')
+    matches = 1
+    common_grounds = []
+    for loc in user_locale:
+        pass
+    return None
