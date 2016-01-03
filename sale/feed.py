@@ -76,8 +76,14 @@ def determine_relation(user_locale, sale_locale):
             common_grounds.append(loc)
             
     common_grounds = [cg.title() for cg in common_grounds]
-    
     if matches >=3:
+        #filtering matches
+        #removing the state first
+        common_grounds.pop(len(common_grounds) - 1)
+        #removing the county
+        common_grounds.pop(len(common_grounds) - 1)
         relation_string = ','.join(common_grounds)
         relation_string = "Common grounds: " + relation_string
+    else:
+        relation_string = "Common grounds:" + ','.join(common_grounds)
     return relation_string
