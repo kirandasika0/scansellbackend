@@ -86,5 +86,5 @@ def determine_relation(user_locale, sale_locale):
         relation_string = ','.join(common_grounds)
         relation_string = "Common grounds: " + relation_string
     else:
-        relation_string = "Common grounds:" + ','.join(common_grounds)
+        relation_string = "Common grounds:" + ', '.join(common_grounds)
     return relation_string
