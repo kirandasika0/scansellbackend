@@ -54,6 +54,7 @@ def generate_feed(user_id):
         images = serializers.serialize("json", SaleImage.objects.filter(sale_id=sale.id))
         product_data = {'id': sale.id, 'seller_id': sale.seller_id,
                         'seller_username': sale.seller_username,
+                        'description': sale.description,
                         'book': json.loads(serializers.serialize("json", [sale.book])[1:-1]),
                         'price': sale.price,
                         'location': sale.location,
