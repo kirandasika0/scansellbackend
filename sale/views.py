@@ -166,6 +166,7 @@ def get_feed(request):
         data = generate_feed(user_id)
         user_redis_key = user_id + "_feed"
         response = {'response': data}
+        return HttpResponse(json.dumps(response), content_type="application/json")
     else:
         return HttpResponse(json.dumps({'response': 'Please send the correct request'}),
                             content_type="application/json")
