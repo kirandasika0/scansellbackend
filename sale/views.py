@@ -167,7 +167,7 @@ def get_feed(request):
        
 @csrf_exempt
 def new_get_feed(request):
-    if request.method == 'POST':
+    if request.method == 'GET':
         return HttpResponse(json.dumps({'response': []}), content_type="application/json")
                             
 # @csrf_exempt
