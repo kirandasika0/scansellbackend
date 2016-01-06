@@ -9,4 +9,5 @@ urlpatterns = [
     url(r'^redis_test/', views.redis_test),
     url(r'^create_locale/', views.create_locale),
     url(r'^get_feed/', views.get_feed),
+    url(r'^sale_notification/', views.sale_notification),
 ]

@@ -116,12 +116,6 @@ def new_sale_insert(request):
 def redis_test(request):
     return HttpResponse("redis cache")
     
-
-@csrf_exempt
-def sale_notification(request):
-    """ All main sale notification will be sent from this view """
-    return HttpResponse(json.dumps({'response': 'send the appropriate request'}),
-                        content_type="application/json")
                         
                         
 
@@ -169,4 +163,14 @@ def get_feed(request):
         return HttpResponse(json.dumps(response), content_type="application/json")
     else:
         return HttpResponse(json.dumps({'response': 'Please send the correct request'}),
+                            content_type="application/json")
+                            
+                            
+@csrf_exempt
+def sale_notification(request):
+    if request.method == 'POST':
+        #get the notif data 
+        return HttpResponse(request.POST)
+    else:
+        return HttpResponse(json.dumps({'response': 'please send the correct request'}),
                             content_type="application/json")
