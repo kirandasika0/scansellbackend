@@ -158,17 +158,12 @@ def get_feed(request):
         #get all the posts from the data base
         user_id = request.GET.get('user_id', "")
         data = generate_feed(user_id)
-        user_redis_key = user_id + "_feed"
         response = {'response': data}
         return HttpResponse(json.dumps(response), content_type="application/json")
     else:
         return HttpResponse(json.dumps({'response': 'Please send the correct request'}),
                             content_type="application/json")
        
-@csrf_exempt
-def new_get_feed(request):
-    if request.method == 'GET':
-        return HttpResponse(json.dumps({'response': []}), content_type="application/json")
                             
 # @csrf_exempt
 # def sale_notification(request):

@@ -9,5 +9,4 @@ urlpatterns = [
     url(r'^redis_test/', views.redis_test),
     url(r'^create_locale/', views.create_locale),
     url(r'^get_feed/', views.get_feed),
-    url(r'^new_get_feed/', views.new_get_feed),
 ]
