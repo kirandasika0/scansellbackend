@@ -157,9 +157,13 @@ def get_feed(request):
     if request.method == 'GET':
         #get all the posts from the data base
         user_id = request.GET.get('user_id', "")
-        data = generate_feed(user_id)
-        response = {'response': data}
-        return HttpResponse(json.dumps(response), content_type="application/json")
+        if user_id:
+            data = generate_feed(user_id)
+            response = {'response': data}
+            return HttpResponse(json.dumps(response), content_type="application/json")
+        else:
+            return HttpResponse(json.dumps({'response': 'please provide a user_id'}),
+                                content_type="application/json")
     else:
         return HttpResponse(json.dumps({'response': 'Please send the correct request'}),
                             content_type="application/json")
