@@ -170,7 +170,7 @@ def get_feed(request):
 def sale_notification(request):
     if request.method == 'POST':
         #get the notif data 
-        return HttpResponse(type(request.body))
+        return HttpResponse(type(request.POST))
     else:
         return HttpResponse(json.dumps({'response': 'please send the correct request'}),
                             content_type="application/json")
