@@ -33,7 +33,7 @@ class Notification:
         ''' Setter method to set the notif 1 type in the database
         make sure the type and the data go in correct '''
         #the data that has come form client side
-        response = json.loads(self.data)
+        response = self.data
         #buyer_id - the current user sending the request
         #buyer_username  - the current username sending the request
         #seller_id - the user who uploaded the product
@@ -49,7 +49,7 @@ class Notification:
                                         sale = Sale.objects.get(pk=int(response["sale_id"])),
                                         notif_data=json.dumps(notif_data))
                                         
-        return json.dumps(notif_data)
+        return json.dumps({'response': 'true'})
         
     def set_notif_type_2(self):
         ''' Setter method to set the notif type 2 in the database
