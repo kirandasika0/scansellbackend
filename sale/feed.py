@@ -84,8 +84,7 @@ def determine_relation(user_locale, sale_locale):
         common_grounds.pop(len(common_grounds) - 1)
         #removing the county
         common_grounds.pop(len(common_grounds) - 1)
-        relation_string = ','.join(common_grounds)
-        relation_string = "Common grounds: " + relation_string
+        relation_string = ', '.join(common_grounds)
     else:
         relation_string = ', '.join(common_grounds)
     return relation_string
