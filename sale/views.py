@@ -8,6 +8,7 @@ import redis
 from feed import generate_feed
 from django.core import serializers
 from notifications import Notification
+from django.core import serializers
 # creating a new redis server
 r = redis.Redis(host='pub-redis-18592.us-east-1-2.4.ec2.garantiadata.com',
                 port=18592,
@@ -200,7 +201,9 @@ def sale_notification(request):
 def get_notifications(request):
     user_id = request.GET.get('user_id', "")
     if user_id:
-        return HttpResponse(json.dumps({'response': []}), content_type="application/json")
+        notifs = SaleNotifications.objects.filter(seller_id=user_id)
+        return HttpResponse(json.dumps({'response': serializers.serialize('json', notifs)}),
+                            content_type="application/json")
     else:
         return HttpResponse(json.dumps({'response': 'user_id not found'}),
                             content_type="application/json")
