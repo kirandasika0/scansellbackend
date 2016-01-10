@@ -44,8 +44,8 @@ class Notification:
                     'pub_date': time.strftime("%Y-%m-%d %H:%M:%S")}
                     
         #inserting data into the database
-        SaleNotification.objects.create(notif_type=1, seller_id=response["seller_id"],
-                                        seller_username = response["seller_username"],
+        SaleNotification.objects.create(notif_type=1, user_id=response["seller_id"],
+                                        user_name = response["seller_username"],
                                         sale = Sale.objects.get(pk=int(response["sale_id"])),
                                         notif_data=json.dumps(notif_data))
                                         
