@@ -201,7 +201,7 @@ def sale_notification(request):
 def get_notifications(request):
     user_id = request.GET.get('user_id', "")
     if user_id:
-        notifs = SaleNotifications.objects.filter(seller_id=user_id)
+        notifs = SaleNotification.objects.filter(seller_id=user_id)
         return HttpResponse(json.dumps({'response': serializers.serialize('json', notifs)}),
                             content_type="application/json")
     else:
