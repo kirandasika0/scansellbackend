@@ -1,12 +1,13 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from .models import Sale, SaleInterest, SaleImage
+from .models import Sale, SaleInterest, SaleImage, SaleNotification
 from search.models import Book
 import json, requests
 import redis
 from feed import generate_feed
 from django.core import serializers
+from notifications import Notification
 # creating a new redis server
 r = redis.Redis(host='pub-redis-18592.us-east-1-2.4.ec2.garantiadata.com',
                 port=18592,
@@ -169,22 +170,37 @@ def get_feed(request):
                             content_type="application/json")
        
                             
-# @csrf_exempt
-# def sale_notification(request):
-#     if request.method == 'POST':
-#         #get the notif data 
-#         data = {'notif_type': request.POST.get('notif_type', ""),
-#                 'seller_id': request.POST.get('seller_id', ""),
-#                 'seller_username': request.POST.get('seller_username', ""),
-#                 'sale_id': request.POST.get('sale_id', ""),
-#                 'buyer_id': request.POST.get('buyer_id', ""),
-#                 'buyer_username': request.POST.get('buyer_username', "")}
-#         notif_type = request.POST.get('notif_type', "")
-#         if notif_type == 1:
-#             notif_type_1 = Notification(1, data)
-#             #setting notif type 1 with method
-#             return_data = notif_type_1.set_notif_type_1()
-#         return HttpResponse(json.dumps(return_data), content_type="application/json")
-#     else:
-#         return HttpResponse(json.dumps({'response': 'please send the correct request'}),
-#                             content_type="application/json")
+@csrf_exempt
+def sale_notification(request):
+    if request.method == 'POST':
+        #get the notif data 
+        data = {'notif_type': request.POST.get('notif_type', ""),
+                'seller_id': request.POST.get('seller_id', ""),
+                'seller_username': request.POST.get('seller_username', ""),
+                'sale_id': request.POST.get('sale_id', ""),
+                'buyer_id': request.POST.get('buyer_id', ""),
+                'buyer_username': request.POST.get('buyer_username', "")}
+        notif_type = request.POST.get('notif_type', "")
+        if notif_type == 1:
+            notif_type_1 = Notification(1, data)
+            #setting notif type 1 with method
+            return_data = notif_type_1.set_notif_type_1()
+        if notif_type == 2:
+            notif_type_2 = Notification(2, data)
+            return_data = notif_type_2.set_notif_type_2()
+        if notif_type == 3:
+            notif_type_3 = Notification(3, data)
+            return_data = notif_type_3.set_notif_type_3()
+        return HttpResponse(json.dumps(return_data), content_type="application/json")
+    else:
+        return HttpResponse(json.dumps({'response': 'please send the correct request'}),
+                            content_type="application/json")
+                            
+@csrf_exempt
+def get_notifications(request):
+    user_id = request.GET.get('user_id', "")
+    if user_id:
+        return HttpResponse(json.dumps({'response': []}), content_type="application/json")
+    else:
+        return HttpResponse(json.dumps({'response': 'user_id not found'}),
+                            content_type="application/json")

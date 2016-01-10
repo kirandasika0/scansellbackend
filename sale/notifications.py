@@ -56,3 +56,5 @@ class Notification:
         this notification will remain until the seller has marked the product sold '''
         #respose data comes from the client side
         pass
+    def set_notif_type_3(self):
+        pass
