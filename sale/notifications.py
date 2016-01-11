@@ -44,7 +44,7 @@ class Notification:
                                         sale = Sale.objects.get(pk=int(response["sale_id"])),
                                         data=notif_data)
                                         
-        return json.dumps({'response': 'true'})
+        return {'response': 'true'}
         
     def set_notif_type_2(self):
         ''' Setter method to set the notif type 2 in the database
