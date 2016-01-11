@@ -181,7 +181,7 @@ def sale_notification(request):
                 'sale_id': request.POST.get('sale_id', ""),
                 'buyer_id': request.POST.get('buyer_id', ""),
                 'buyer_username': request.POST.get('buyer_username', "")}
-        notif_type = int(request.POST.get('notif_type', ""))
+        notif_type = request.POST.get('notif_type', "")
         return_data = ""
         if notif_type == 1:
             notif_type_1 = Notification(1, data)
