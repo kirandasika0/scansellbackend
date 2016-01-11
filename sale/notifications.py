@@ -37,20 +37,20 @@ class Notification:
         response = self.data
         notif_for_sale = Sale.objects.get(pk=int(response["sale_id"]))
         notif_string = response["buyer_username"] + " is interested in your book " + notif_for_sale.book.uniform_title.upper() + "."
-        notif_data = json.dumps({'type': 1, 'buyer_id': response["buyer_id"],
+        notif_data = json.dumps({'notif_type': 1, 'buyer_id': response["buyer_id"],
                     'buyer_username': response["buyer_username"],
                     'buyer_username': response["buyer_username"],
                     'notification_string': notif_string})
                                         
         #check if the notification is there by the same user
-        notifs = SaleNotification.objects.filter(notif_type=1, user_id=response["seller_id"])
+        notifs = SaleNotification.objects.filter(notif_type=1, user_id=response["seller_id"], sale_id=response["sale_id"])
         if len(notifs) == 0:
             SaleNotification.objects.create(notif_type=1, user_id=response["seller_id"],
                                                 user_name = response["seller_username"],
                                                 sale = Sale.objects.get(pk=int(response["sale_id"])),
                                                 data=notif_data)
         for notif in notifs:
-            if response["buyer_id"] not in json.loads(notif.data).values() or reponse["sale_id"] == notif.sale_id:
+            if response["buyer_id"] not in json.loads(notif.data).values():
                #inserting data into the database
                SaleNotification.objects.create(notif_type=1, user_id=response["seller_id"],
                                                 user_name = response["seller_username"],
