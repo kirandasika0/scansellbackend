@@ -194,9 +194,17 @@ def sale_notification(request):
 def get_notifications(request):
     user_id = request.GET.get('user_id', "")
     if user_id:
-        notifs = SaleNotification.objects.filter(user_id=user_id)
-        return HttpResponse(json.dumps({'response': json.loads(serializers.serialize('json', notifs))}),
-                            content_type="application/json")
+        notifications = SaleNotification.objects.filter(user_id=user_id)
+        notifs_list = []
+        for notification in notifications:
+            response_dict = {'notif_type': notification.notif_type,
+                            'id': notification.id,
+                            'user_id': notification.user_id,
+                            'username': notification.user_name,
+                            'data': json.loads(notification.data),
+                            'sale_id': notification.sale_id}
+            notifs_list.append(response_dict)
+        return HttpResponse(json.dumps({'response': notifs_list}), content_type="application/json")
     else:
         return HttpResponse(json.dumps({'response': 'user_id not found'}),
                             content_type="application/json")
