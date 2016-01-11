@@ -182,16 +182,11 @@ def sale_notification(request):
                 'buyer_id': request.POST.get('buyer_id', ""),
                 'buyer_username': request.POST.get('buyer_username', "")}
         notif_type = request.POST.get('notif_type', "")
+        return_data = ""
         if notif_type == 1:
             notif_type_1 = Notification(1, data)
             #setting notif type 1 with method
             return_data = notif_type_1.set_notif_type_1()
-        if notif_type == 2:
-            notif_type_2 = Notification(2, data)
-            return_data = notif_type_2.set_notif_type_2()
-        if notif_type == 3:
-            notif_type_3 = Notification(3, data)
-            return_data = notif_type_3.set_notif_type_3()
         return HttpResponse(json.dumps(return_data), content_type="application/json")
     else:
         return HttpResponse(json.dumps({'response': 'please send the correct request'}),
