@@ -34,10 +34,6 @@ class Notification:
         make sure the type and the data go in correct '''
         #the data that has come form client side
         response = self.data
-        #buyer_id - the current user sending the request
-        #buyer_username  - the current username sending the request
-        #seller_id - the user who uploaded the product
-        #seller_username - the username who uploaded the product
         notif_data = json.dumps({'type': 1, 'buyer_id': response["buyer_id"],
                     'buyer_username': response["buyer_username"],
                     'buyer_username': response["buyer_username"]})

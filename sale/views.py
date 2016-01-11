@@ -183,7 +183,7 @@ def sale_notification(request):
                 'buyer_username': request.POST.get('buyer_username', "")}
         if data['notif_type'] == "1":
             notif = Notification(1, data)
-            return HttpResponse(json.dumps(notif.set_notif_type_1), content_type="application/json")
+            return HttpResponse(json.dumps(notif.set_notif_type_1()), content_type="application/json")
         else:
             return HttpResponse("not inserted")
     else:
