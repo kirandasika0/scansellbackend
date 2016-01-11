@@ -47,7 +47,7 @@ class Notification:
         SaleNotification.objects.create(notif_type=1, user_id=response["seller_id"],
                                         user_name = response["seller_username"],
                                         sale = Sale.objects.get(pk=int(response["sale_id"])),
-                                        notif_data=json.dumps(notif_data))
+                                        notif_data=notif_data)
                                         
         return json.dumps({'response': 'true'})
         
