@@ -38,10 +38,9 @@ class Notification:
         #buyer_username  - the current username sending the request
         #seller_id - the user who uploaded the product
         #seller_username - the username who uploaded the product
-        notif_data = {'type': 1, 'buyer_id': response["buyer_id"],
+        notif_data = json.dumps({'type': 1, 'buyer_id': response["buyer_id"],
                     'buyer_username': response["buyer_username"],
-                    'buyer_username': response["buyer_username"],
-                    'pub_date': time.strftime("%Y-%m-%d %H:%M:%S")}
+                    'buyer_username': response["buyer_username"]})
                     
         #inserting data into the database
         SaleNotification.objects.create(notif_type=1, user_id=response["seller_id"],
