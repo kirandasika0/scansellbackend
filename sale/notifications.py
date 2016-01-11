@@ -1,5 +1,6 @@
 import json, time
 from .models import SaleNotification, Sale
+from search.models import Book
 ###########################################
 #All imports above this comment
 '''
@@ -34,7 +35,8 @@ class Notification:
         make sure the type and the data go in correct '''
         #the data that has come form client side
         response = self.data
-        notif_string = response["buyer_username"] + " is interested in your book."
+        notif_for_sale = Sale.objects.get(pk=int(response["sale_id"]))
+        notif_string = response["buyer_username"] + " is interested in your book " + notif_for_sale.book.uniform_title.upper() + "."
         notif_data = json.dumps({'type': 1, 'buyer_id': response["buyer_id"],
                     'buyer_username': response["buyer_username"],
                     'buyer_username': response["buyer_username"],
