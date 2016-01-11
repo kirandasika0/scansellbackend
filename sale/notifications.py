@@ -43,7 +43,7 @@ class Notification:
                     'notification_string': notif_string})
                                         
         #check if the notification is there by the same user
-        notifs = SaleNotification.objects.filter(notif_type=1)
+        notifs = SaleNotification.objects.filter(notif_type=1, user_id=response["seller_id"])
         if len(notifs) == 0:
             SaleNotification.objects.create(notif_type=1, user_id=response["seller_id"],
                                                 user_name = response["seller_username"],
