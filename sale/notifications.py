@@ -34,9 +34,11 @@ class Notification:
         make sure the type and the data go in correct '''
         #the data that has come form client side
         response = self.data
+        notif_string = response["buyer_username"] + " is interested in your book."
         notif_data = json.dumps({'type': 1, 'buyer_id': response["buyer_id"],
                     'buyer_username': response["buyer_username"],
-                    'buyer_username': response["buyer_username"]})
+                    'buyer_username': response["buyer_username"],
+                    'notification_string': notif_string})
                                         
         #check if the notification is there by the same user
         notifs = SaleNotification.objects.filter(notif_type=1)
