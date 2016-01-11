@@ -181,7 +181,7 @@ def sale_notification(request):
                 'sale_id': request.POST.get('sale_id', ""),
                 'buyer_id': request.POST.get('buyer_id', ""),
                 'buyer_username': request.POST.get('buyer_username', "")}
-        if data['notif_type'] == 1:
+        if data['notif_type'] == "1":
             notif = Notification(1, data)
             return HttpResponse(json.dumps(notif.set_notif_type_1), content_type="application/json")
         else:
