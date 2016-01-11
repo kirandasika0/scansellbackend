@@ -40,7 +40,7 @@ class Notification:
         #seller_username - the username who uploaded the product
         notif_data = {'type': 1, 'buyer_id': response["buyer_id"],
                     'buyer_username': response["buyer_username"],
-                    'buyer_name': response["buyer_name"],
+                    'buyer_username': response["buyer_username"],
                     'pub_date': time.strftime("%Y-%m-%d %H:%M:%S")}
                     
         #inserting data into the database
