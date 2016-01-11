@@ -44,6 +44,15 @@ class Notification:
                                         sale = Sale.objects.get(pk=int(response["sale_id"])),
                                         data=notif_data)
                                         
+        #check if the notification is there by the same user
+        notifs = SaleNotification.objects.filter(notif_type=1)
+        for notif in notifs:
+            if notif_data['buyer_id'] not in json.loads(notif.data).values():
+               #inserting data into the database
+               SaleNotification.objects.create(notif_type=1, user_id=response["seller_id"],
+                                                user_name = response["seller_username"],
+                                                sale = Sale.objects.get(pk=int(response["sale_id"])),
+                                                data=notif_data) 
         return {'response': 'true'}
         
     def set_notif_type_2(self):
