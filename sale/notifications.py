@@ -50,7 +50,7 @@ class Notification:
                                                 sale = Sale.objects.get(pk=int(response["sale_id"])),
                                                 data=notif_data)
         for notif in notifs:
-            if response["buyer_id"] not in json.loads(notif.data).values():
+            if response["buyer_id"] not in json.loads(notif.data).values() and reponse["sale_id"] == notif.sale_id:
                #inserting data into the database
                SaleNotification.objects.create(notif_type=1, user_id=response["seller_id"],
                                                 user_name = response["seller_username"],
