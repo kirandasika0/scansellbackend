@@ -212,7 +212,7 @@ def get_notifications(request):
                             
 @csrf_exempt
 def delete_notification(request):
-    notification_id = request.GET.get('notif_id', "")
+    notification_id = request.GET.get('notification_id', "")
     if notification_id:
         #delete notif
         SaleNotification.objects.get(pk=int(notification_id)).delete()
