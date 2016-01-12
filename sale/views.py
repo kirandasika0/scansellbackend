@@ -209,3 +209,13 @@ def get_notifications(request):
     else:
         return HttpResponse(json.dumps({'response': 'user_id not found'}),
                             content_type="application/json")
+                            
+@csrf_exempt
+def delete_notification(request):
+    notification_id = request.GET.get('notif_id', "")
+    if notification_id:
+        #delete notif
+        SaleNotification.objects.get(pk=int(notification_id)).delete()
+        return HttpResponse(json.dumps({'response': 'true del'}) ,content_type="application/json")
+    else:
+        return HttpResponse(json.dumps({'response': 'please send notif id'}), content_type="application/json")
