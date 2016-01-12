@@ -68,7 +68,7 @@ class Notification:
         #getting the user
         buyer_user_json = json.loads(serializers.serialize('json', [User.objects.get(user_id=response["seller_id"])])[1:-1])
         seller_user_json = json.loads(serializers.serialize('json', [User.objects.get(user_id=response["buyer_id"])])[1:-1])
-        current_sale = Sale.objects.get(pk=int(response["sale_id"]))
+        current_sale = Sale.objects.get(pk=response["sale_id"])
         #notification string for the buyer in the app
         notification_string_buyer = "You can contact " + response["seller_username"] + " regarding " + current_sale.book.uniform_title.upper() + " purchase."
         #notification string for the seller in the app
