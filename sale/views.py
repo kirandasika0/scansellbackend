@@ -186,7 +186,7 @@ def sale_notification(request):
             return HttpResponse(json.dumps(notif.set_notif_type_1()), content_type="application/json")
         if data['notif_type'] == "2":
             notif = Notification(2, data)
-            return HttpResponse(json.dumps(notif.set_notif_type_2()), content_type="application/json")
+            return HttpResponse(json.dumps(notif.set_notif_type_2(request.POST.get('notif_1_id', ""))), content_type="application/json")
     else:
         return HttpResponse(json.dumps({'response': 'please send the correct request'}),
                             content_type="application/json")

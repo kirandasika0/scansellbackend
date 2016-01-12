@@ -60,7 +60,7 @@ class Notification:
                                                 data=notif_data) 
         return {'response': 'true'}
         
-    def set_notif_type_2(self):
+    def set_notif_type_2(self, notif_type_1_id):
         ''' Setter method to set the notif type 2 in the database
         this notification will remain until the seller has marked the product sold '''
         #respose data comes from the client side
@@ -88,6 +88,10 @@ class Notification:
                                                             sale=current_sale,
                                                             data=json.dumps(notif_data_seller))
         seller_notification.save()
+        
+        #deleting the notif type 1 notifiction
+        notif_to_del = SaleNotification.objects.get(pk=int(notif_type_1_id)).delete()
+        
         return {'response': 'true'}
         
     def set_notif_type_3(self):
