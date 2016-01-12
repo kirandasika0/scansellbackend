@@ -1,6 +1,8 @@
 import json, time
 from .models import SaleNotification, Sale
 from search.models import Book
+from django.core import serializers
+from users_b.models import User
 ###########################################
 #All imports above this comment
 '''
@@ -62,6 +64,31 @@ class Notification:
         ''' Setter method to set the notif type 2 in the database
         this notification will remain until the seller has marked the product sold '''
         #respose data comes from the client side
-        pass
+        response = self.data
+        #getting the user
+        buyer_user_json = json.loads(serializers.serialize('json', [User.objects.get(user_id=response["seller_id"])])[1:-1])
+        seller_user_json = json.loads(serializers.serialize('json', [User.objects.get(user_id=response["buyer_id"])])[1:-1])
+        current_sale = Sale.objects.get(pk=int(response["sale_id"]))
+        #notification string for the buyer in the app
+        notification_string_buyer = "You can contact " + response["seller_username"] + " regarding " + current_sale.book.uniform_title.upper() + " purchase."
+        #notification string for the seller in the app
+        notification_string_seller = "You can contact " + response["buyer_username"] + " regarding " + current_sale.book.uniform_title.upper() + " sale."
+        
+        notif_data_buyer = {'notif_type': 2, 'user_data': buyer_user_json, 'notification_string': notification_string_buyer}
+        notif_data_seller = {'notif_type': 2, 'user_data': seller_user_json, 'notification_string': notification_string_seller}
+        
+        buyer_notification = SaleNotification.objects.create(notif_type=2, user_id=response["buyer_id"],
+                                                            user_name=response["buyer_username"],
+                                                            sale=current_sale,
+                                                            data=json.dumps(notif_data_buyer))
+        buyer_notification.save()
+        
+        seller_notification = SaleNotification.objects.create(notif_type=2, user_id=response["seller_id"],
+                                                            user_name=response["seller_username"],
+                                                            sale=current_sale,
+                                                            data=json.dumps(notif_data_seller))
+        seller_notification.save()
+        return {'response': 'true'}
+        
     def set_notif_type_3(self):
         pass
