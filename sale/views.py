@@ -161,7 +161,8 @@ def get_feed(request):
         user_id = request.GET.get('user_id', "")
         if user_id:
             data = generate_feed(user_id)
-            response = {'response': data}
+            response = {'response': data,
+                        'current_app_version': '1.1'}
             return HttpResponse(json.dumps(response), content_type="application/json")
         else:
             return HttpResponse(json.dumps({'response': 'please provide a user_id'}),
