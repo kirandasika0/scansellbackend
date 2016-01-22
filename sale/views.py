@@ -215,10 +215,16 @@ def get_notifications(request):
                             
 @csrf_exempt
 def delete_notification(request):
-    notification_id = request.GET.get('notification_id', "")
-    if notification_id:
-        #delete notif
-        SaleNotification.objects.get(pk=int(notification_id)).delete()
-        return HttpResponse(json.dumps({'response': 'true del'}) ,content_type="application/json")
+    if request.method == 'POST':
+        notification_id = request.POST.get('notification_id', "")
+        if notification_id:
+            # delete the given notification
+            SaleNotification.objects.get(pk=int(notification_id)).delete()
+            return HttpResponse(json.dumps({'response': 'true del'}),
+                                content_type="application/json")
+        else:
+            return HttpResponse(json.dumps({'response': 'please send notification id'}),
+                                content_type="application/json")
     else:
-        return HttpResponse(json.dumps({'response': 'please send notif id'}), content_type="application/json")
+        return HttpResponse(json.dumps({'response': 'please send the correct request'}),
+                            content_type="application/json")
