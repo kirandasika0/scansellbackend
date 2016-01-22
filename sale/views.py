@@ -160,9 +160,11 @@ def get_feed(request):
         #get all the posts from the data base
         user_id = request.GET.get('user_id', "")
         if user_id:
+            user_notifications = len(SaleNotification.objects.filter(user_id=user_id))
             data = generate_feed(user_id)
             response = {'response': data,
-                        'current_app_version': '1.0'}
+                        'current_app_version': '1.0',
+                        'user_notifications_number': user_notifications}
             return HttpResponse(json.dumps(response), content_type="application/json")
         else:
             return HttpResponse(json.dumps({'response': 'please provide a user_id'}),
