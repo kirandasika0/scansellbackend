@@ -123,7 +123,7 @@ def get_relative_feed(user_id):
     hasRedisKey = (False, True)[r.exists(user_redis_key) == True]
     # now check if the redis key is available
     if hasRedisKey == True:
-        return r.get(user_redis_key)['user_feed']
+        return json.loads(r.get(user_redis_key))['user_feed']
     else:
         # now saving the feed in the redis box
         new_user_feed = {'user_feed': generate_feed(user_id)}
