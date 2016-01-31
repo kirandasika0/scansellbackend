@@ -89,3 +89,42 @@ def determine_relation(user_locale, sale_locale):
     else:
         relation_string = ', '.join(common_grounds)
     return relation_string
+    
+def sale_relationship(user_locale, sale_locale):
+    # creating a common ground list
+    common_grounds = []
+    user_locale = user_locale.split(',')
+    sale_locale = sale_locale.split(',')
+    matches = 0
+    for loc in user_locale:
+        if loc in sale_locale:
+            matches += 1
+            common_grounds.append(loc)
+    
+    # title casing the common ground list
+    common_grounds = [loc.title() for loc in common_grounds]
+    return_dict = {}
+    if matches >=3:
+        common_grounds.pop(len(common_grounds)-1)
+        return_dict = {'common_grounds': ', '.join(common_grounds),
+                        'matches': matches}
+    else:
+        return_dict = {'common_ground': ', '.join(common_grounds),
+                        'matches': matches}
+    return return_dict
+
+def get_relative_feed(user_id):
+    # get the redis key of the user
+    user = User.objects.get(pk=int(user_id))
+    # user redis key
+    user_redis_key = user.redis_key
+    
+    hasRedisKey = (False, True)[r.exists(user_redis_key) == True]
+    # now check if the redis key is available
+    if hasRedisKey == True:
+        return r.get(user_redis_key)['user_feed']
+    else:
+        # now saving the feed in the redis box
+        new_user_feed = {'user_feed': generate_feed(user_id)}
+        r.setex(user_redis_key, 7200, new_user_feed)
+        return new_user_feed['user_feed']

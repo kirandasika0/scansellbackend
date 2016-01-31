@@ -5,7 +5,7 @@ from .models import Sale, SaleInterest, SaleImage, SaleNotification
 from search.models import Book
 import json, requests
 import redis
-from feed import generate_feed
+from feed import generate_feed, get_relative_feed
 from django.core import serializers
 from notifications import Notification
 from django.core import serializers
@@ -161,7 +161,7 @@ def get_feed(request):
         user_id = request.GET.get('user_id', "")
         if user_id:
             user_notifications = len(SaleNotification.objects.filter(user_id=user_id))
-            data = generate_feed(user_id)
+            data = get_relative_feed(user_id)
             response = {'response': data,
                         'current_app_version': '1.0',
                         'user_notifications_number': user_notifications}
@@ -219,9 +219,12 @@ def delete_notification(request):
         notification_id = request.POST.get('notification_id', "")
         if notification_id:
             # delete the given notification
-            SaleNotification.objects.get(pk=int(notification_id)).delete()
-            return HttpResponse(json.dumps({'response': 'true del'}),
-                                content_type="application/json")
+            if SaleNotification.objects.get(pk=int(notification_id)).delete():
+                return HttpResponse(json.dumps({'response': 'true del'}),
+                                    content_type="application/json")
+            else:
+                return HttpResponse(json.dumps({'response': 'error in deleting'}),
+                                    content_type="application/json")
         else:
             return HttpResponse(json.dumps({'response': 'please send notification id'}),
                                 content_type="application/json")
