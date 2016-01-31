@@ -127,5 +127,5 @@ def get_relative_feed(user_id):
     else:
         # now saving the feed in the redis box
         new_user_feed = {'user_feed': generate_feed(user_id)}
-        r.setex(user_redis_key, 7200, new_user_feed)
+        r.set(user_redis_key, new_user_feed)
         return new_user_feed['user_feed']
