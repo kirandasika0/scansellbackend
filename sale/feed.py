@@ -115,7 +115,7 @@ def sale_relationship(user_locale, sale_locale):
 
 def get_relative_feed(user_id):
     # get the redis key of the user
-    user = User.objects.get(pk=user_id)
+    user = User.objects.get(user_id=user_id)
     # user redis key
     user_redis_key = user.redis_key
     
