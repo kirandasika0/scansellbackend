@@ -161,7 +161,7 @@ def get_feed(request):
         user_id = request.GET.get('user_id', "")
         if user_id:
             user_notifications = len(SaleNotification.objects.filter(user_id=user_id))
-            data = get_relative_feed(user_id)
+            data = generate_feed(user_id)
             response = {'response': data,
                         'current_app_version': '1.0',
                         'user_notifications_number': user_notifications}
