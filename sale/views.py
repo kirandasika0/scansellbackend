@@ -9,6 +9,8 @@ from feed import generate_feed, get_relative_feed
 from django.core import serializers
 from notifications import Notification
 from django.core import serializers
+from django.core.serializers.json import DjangoJSONEncoder
+
 # creating a new redis server
 r = redis.Redis(host='pub-redis-18592.us-east-1-2.4.ec2.garantiadata.com',
                 port=18592,
@@ -206,7 +208,8 @@ def get_notifications(request):
                             'user_id': notification.user_id,
                             'username': notification.user_name,
                             'data': json.loads(notification.data),
-                            'sale_id': notification.sale_id}
+                            'sale_id': notification.sale_id,
+                            'pub_date': json.dumps(notification.pub_date, cls=DjangoJSONEncoder)}
             notifs_list.append(response_dict)
         return HttpResponse(json.dumps({'response': notifs_list}), content_type="application/json")
     else:

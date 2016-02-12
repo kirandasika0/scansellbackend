@@ -32,7 +32,10 @@ class Notification:
     def __init__(self, notif_type, data):
         self.notif_type = notif_type
         self.data = data
-        
+    
+    def __str__(self):
+        return "Notification Type: " + self.notif_type
+    
     def set_notif_type_1(self):
         ''' Setter method to set the notif 1 type in the database
         make sure the type and the data go in correct '''
