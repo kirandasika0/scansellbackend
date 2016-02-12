@@ -209,7 +209,7 @@ def get_notifications(request):
                             'username': notification.user_name,
                             'data': json.loads(notification.data),
                             'sale_id': notification.sale_id,
-                            'pub_date': json.dumps(notification.pub_date, cls=DjangoJSONEncoder)}
+                            'pub_date': json.loads(json.dumps(notification.pub_date, cls=DjangoJSONEncoder))}
             notifs_list.append(response_dict)
         return HttpResponse(json.dumps({'response': notifs_list}), content_type="application/json")
     else:
