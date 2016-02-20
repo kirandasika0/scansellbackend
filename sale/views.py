@@ -10,6 +10,8 @@ from django.core import serializers
 from notifications import Notification
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
+from notification2 import get_notif
+import exceptions
 
 # creating a new redis server
 r = redis.Redis(host='pub-redis-18592.us-east-1-2.4.ec2.garantiadata.com',
@@ -232,4 +234,18 @@ def delete_notification(request):
                                 content_type="application/json")
     else:
         return HttpResponse(json.dumps({'response': 'please send the correct request'}),
+                            content_type="application/json")
+                            
+@csrf_exempt
+def get_notification(request):
+    if request.method == 'GET':
+        notification_id = request.GET.get('notification_id', '')
+        try:
+            notification = get_notif(notification_id)
+        except (exceptions.NotificationNotFoundException) as e:
+            notification = json.dumps({'error': str(e)})
+            
+        return HttpResponse(notification, content_type="application/json")
+    else:
+        return HttpResponse(json.dumps({'response':'please send the correct request'}),
                             content_type="application/json")

@@ -1,17 +1,11 @@
-# this file extends from the main notification class that we wrote
-class Notification():
-    ''' This class is for Main Notifications that are used in the app '''
-    def __str__(self):
-        return 'UserNotification'
+# This file will hold all the notification function to get and set notificaitions
+from exceptions import NotificationNotFoundException
+from .models import SaleNotification
 
-    def __init__(self, **kwargs):
-        self.init_keys = kwargs.keys()
-        self.init_values = kwargs.values()
-        self.data = kwargs
-
-    def set_notitfication_type_1(self):
-        for key in self.init_keys:
-            print self.data[key]
-
-    def set_notification_type_2(self):
-        return self.data
+def get_notif(notif_id):
+    try:
+        notification = SaleNotification.objects.get(pk=notif_id)
+    except (SaleNotification.DoesNotExist):
+        raise NotificationNotFoundException("Looks like the exception was not found")
+    
+    return serializers.serialize("json", [notification])[1:-1]
