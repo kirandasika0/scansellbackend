@@ -26,7 +26,7 @@ def place_sale(sale, locale):
 def generate_feed(user_id):
     user_id = str(user_id)
     user_redis_key = user_id + "_feed"
-    user = User.objects.filter(user_id=user_id)[0]
+    user = User.objects.get(user_id=user_id)
     user_locale_list = user.locale
     user_locale = user.locale.split(',')
     # reversing the list
