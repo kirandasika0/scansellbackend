@@ -4,6 +4,7 @@ from users_b.models import User
 from django.core import serializers
 from search.models import Book
 import json
+from exceptions import UserForIDNotFoundException
 # Creating new redis server
 r = redis.Redis(host='pub-redis-18592.us-east-1-2.4.ec2.garantiadata.com',
                 port=18592,
@@ -26,7 +27,10 @@ def place_sale(sale, locale):
 def generate_feed(user_id):
     user_id = str(user_id)
     user_redis_key = user_id + "_feed"
-    user = User.objects.get(user_id=user_id)
+    try:
+        user = User.objects.get(user_id=user_id)
+    except (User.DoesNotExist):
+        raise UserForIDNotFoundException("user with id" + user_id + "not found.")
     user_locale_list = user.locale
     user_locale = user.locale.split(',')
     # reversing the list

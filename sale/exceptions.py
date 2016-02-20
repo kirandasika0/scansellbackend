@@ -6,3 +6,7 @@ class NotificationNotFoundException(Exception):
     def __init__(self, *args, **kwargs):
         Exception.__init__(self, *args, **kwargs)
 
+class UserForIDNotFoundException(Exception):
+    ''' This only arises when the user id is not in the database '''
+    def __init__(self, *args, **kwargs):
+        Exception.__init__(self, *args, **kwargs)
