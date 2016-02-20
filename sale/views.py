@@ -167,10 +167,11 @@ def get_feed(request):
                 user_notifications = len(SaleNotification.objects.filter(user_id=user_id))
             except (SaleNotification.DoesNotExist) as e:
                 user_notifications = 0
+            data = []
             try:
                 data = generate_feed(user_id)
             except (exceptions.UserForIDNotFoundException) as e:
-                data = [{'error' str(e)}]
+                data.append({'error': str(e)})
             response = {'response': data,
                         'current_app_version': '1.0',
                         'user_notifications_number': user_notifications}
