@@ -244,3 +244,9 @@ def delete_notification(request):
     else:
         return HttpResponse(json.dumps({'response': 'please send the correct request'}),
                             content_type="application/json")
+@csrf_exempt
+def test_patch(request):
+    if request.method == 'PATCH':
+        return HttpResponse('Welcome this is a patch request')
+    else:
+        return HttpResponse('Fuck you')

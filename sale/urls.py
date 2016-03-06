@@ -12,4 +12,5 @@ urlpatterns = [
     url(r'^sale_notification/', views.sale_notification),
     url(r'^get_notifications/', views.get_notifications),
     url(r'^delete_notification/', views.delete_notification),
+    url(r'^test_patch/', views.test_patch),
 ]
