@@ -3,6 +3,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 import json
 from .models import Book
+from django.core import serializers
 
 def home(request):
     return HttpResponse("Welcome", content_type="application/json")
@@ -48,4 +49,4 @@ def search_book(request):
         search_query = request.GET.get('search_string')
         #searching for books
         books = Book.objects.filter(full_title=search_query)
-        return HttpResponse(books)
+        return HttpResponse(serializers.serialize(books, 'json'))
