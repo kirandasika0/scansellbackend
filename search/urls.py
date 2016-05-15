@@ -4,4 +4,5 @@ urlpatterns = [
     url(r'^$', views.home), 
     url(r'^insert_book/', views.insert_book),
     url(r'^new_search/', views.new_search),
+    url(r'^search_book/', views.search_book),
 ]
