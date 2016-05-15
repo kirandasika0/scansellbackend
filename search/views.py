@@ -41,3 +41,11 @@ def new_search(request):
     else:
         return HttpResponse(json.dumps({'response': 'please send the correct request'}),
                             content_type="application/json")
+                            
+@csrf_exempt
+def search_book(request):
+    if request.method == 'GET':
+        search_query = request.GET.get('search_string')
+        return HttpResponse(search_query)
+    else:
+        return HttpResponse('fd')
