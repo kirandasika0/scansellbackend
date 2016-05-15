@@ -46,6 +46,6 @@ def new_search(request):
 def search_book(request):
     if request.method == 'GET':
         search_query = request.GET.get('search_string')
-        return HttpResponse(search_query)
-    else:
-        return HttpResponse('fd')
+        #searching for books
+        books = Book.objects.filter(full_title=search_query)
+        return HttpResponse(books)
