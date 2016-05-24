@@ -30,7 +30,7 @@ def generate_feed(user_id):
     try:
         user = User.objects.get(user_id=user_id)
     except (User.DoesNotExist):
-        raise UserForIDNotFoundException("user with id" + user_id + " not found.")
+        raise UserForIDNotFoundException("user with id " + user_id + " not found.")
     user_locale_list = user.locale
     user_locale = user.locale.split(',')
     # reversing the list
