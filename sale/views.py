@@ -280,7 +280,7 @@ def test_patch(request):
 
 
 @csrf_exempt
-def get_rank_feed(reqeust):
+def get_rank_feed(request):
     if request.method == 'POST':
         user_id = request.POST.get('user_id')
         
