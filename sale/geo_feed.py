@@ -14,7 +14,7 @@ def geo_feed(user, location):
     
     #iterating through all sales
     for sale in sales:
-        latitude, longitude = str(sale.geo_point.split(','))
+        latitude, longitude = sale.geo_point.split(',')
         
         #converting to float
         float(latitude)
