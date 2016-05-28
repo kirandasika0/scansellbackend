@@ -12,7 +12,7 @@ from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 import exceptions
 from location import Location
-from geo_feed import geo_feed
+from distance_module.geo_feed import geo_feed
 from datetime import datetime
 from users_b.models import User
 
@@ -261,18 +261,17 @@ def test_patch(request):
 def geo_feed_view(request):
     if request.method == 'GET':
         user_id = request.GET.get('user_id')
-        latitude = request.GET.get('lat')
-        longitude = request.GET.get('long')
+        latitude = float(request.GET.get('lat'))
+        longitude = float(request.GET.get('long'))
         
         if user_id and latitude and longitude:
             current_time = datetime.now()
             user_location = Location(latitude, longitude, current_time)
             user = User.objects.get(user_id=user_id)
             
-            #creating geo feed
-            response = {'response': geo_feed(user, user_location)}
+            feed_results = geo_feed(user, user_location)
             
-            return HttpResponse(json.dumps(response),
+            return HttpResponse(serializers.serialize("json", feed_results),
                                 content_type="application/json")
         else:
             return HttpResponse(json.dumps({'repsonse': 'please send requied data'}),

@@ -1,7 +1,7 @@
 from distance_module import *
-from .models import Sale
+from sale.models import Sale
 
-MAX_SEARCH_RADIUS = 1.5
+MAX_SEARCH_RADIUS = 2.5
 
 def geo_feed(user, location):
     ''' both user and location are objects '''
@@ -16,12 +16,10 @@ def geo_feed(user, location):
     for sale in sales:
         latitude, longitude = sale.geo_point.split(',')
         
-        #converting to float
-        float(latitude)
-        float(longitude)
+        latitude = float(latitude)
+        longitude = float(longitude)
         
-        distance = distance_km(location.latitude, location.longitude,
-                                latitude, longitude)
+        distance = distance_km(location.latitude, location.longitude, latitude, longitude)
         
         if distance < MAX_SEARCH_RADIUS:
             # given sale is in the range of being bought
@@ -29,5 +27,5 @@ def geo_feed(user, location):
         else:
             continue
         
-        return feed_sales
+    return feed_sales
         
