@@ -134,3 +134,9 @@ def get_relative_feed(user_id):
         new_user_feed = {'user_feed': generate_feed(user_id)}
         r.set(user_redis_key, new_user_feed)
         return new_user_feed['user_feed']
+        
+
+def create_geofence(user_id="ME6lnbVxR9"):
+    ''' this function will create a geofence for a user based on his location '''
+    pass
+    
