@@ -1,7 +1,10 @@
-import distance_module
+from distance_module.distance_module import distance_km, distance_mi
 from .models import Sale
+import os
 
 MAX_SEARCH_RADIUS = 1.5
+
+os.system("python distance_module/setup.py build_ext --inplace")
 
 def geo_feed(user, location):
     ''' both user and location are objects '''
@@ -20,7 +23,7 @@ def geo_feed(user, location):
         float(latitude)
         float(longitude)
         
-        distance = distance_module.distance_km(location.latitude, location.longitude,
+        distance = distance_km(location.latitude, location.longitude,
                                 latitude, longitude)
         
         if distance < MAX_SEARCH_RADIUS:
