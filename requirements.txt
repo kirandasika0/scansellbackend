@@ -1,5 +1,4 @@
 Cython==0.24
--e git+https://github.com/zeevt/gevent.git@issue477#egg=gevent
 Django==1.8.3
 MySQL-python==1.2.5
 argparse==1.2.1
