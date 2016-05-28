@@ -1,3 +1,6 @@
+import os
+os.system("python distance_module/setup.py build_ext --inplace")
+
 from distance_module import distance_km
 from sale.models import Sale
 
