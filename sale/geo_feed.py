@@ -1,4 +1,4 @@
-from distance_module.distance_module import *
+from distance_module import *
 from .models import Sale
 
 MAX_SEARCH_RADIUS = 1.5
