@@ -257,22 +257,22 @@ def test_patch(request):
         
         
 
-# @csrf_exempt
-# def geo_feed_view(request):
-#     if request.method == 'GET':
-#         user_id = request.GET.get('user_id')
-#         latitude = float(request.GET.get('lat'))
-#         longitude = float(request.GET.get('long'))
+@csrf_exempt
+def geo_feed_view(request):
+    if request.method == 'GET':
+        user_id = request.GET.get('user_id')
+        latitude = float(request.GET.get('lat'))
+        longitude = float(request.GET.get('long'))
         
-#         if user_id and latitude and longitude:
-#             current_time = datetime.now()
-#             user_location = Location(latitude, longitude, current_time)
-#             user = User.objects.get(user_id=user_id)
+        if user_id and latitude and longitude:
+            current_time = datetime.now()
+            user_location = Location(latitude, longitude, current_time)
+            user = User.objects.get(user_id=user_id)
             
-#             feed_results = geo_feed(user, user_location)
+            feed_results = geo_feed(user, user_location)
             
-#             return HttpResponse(serializers.serialize("json", feed_results),
-#                                 content_type="application/json")
-#         else:
-#             return HttpResponse(json.dumps({'repsonse': 'please send requied data'}),
-#                                 content_type="application/json")
+            return HttpResponse(serializers.serialize("json", feed_results),
+                                content_type="application/json")
+        else:
+            return HttpResponse(json.dumps({'repsonse': 'please send requied data'}),
+                                content_type="application/json")
