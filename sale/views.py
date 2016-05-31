@@ -12,7 +12,7 @@ from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 import exceptions
 from location import Location
-#from distance_module.geo_feed import geo_feed
+from distance_module.geo_feed import geo_feed
 from datetime import datetime
 from users_b.models import User
 
@@ -276,21 +276,3 @@ def test_patch(request):
 #         else:
 #             return HttpResponse(json.dumps({'repsonse': 'please send requied data'}),
 #                                 content_type="application/json")
-
-
-
-@csrf_exempt
-def get_rank_feed(request):
-    if request.method == 'POST':
-        user_id = request.POST.get('user_id')
-        
-        sales = Sale.objects.all()
-        
-        response = {
-            'response': json.loads(serializers.serialize("json", sales))
-            
-        }
-        return HttpResponse(json.dumps(response), content_type="application/json")
-    else:
-        return HttpResponse(json.dumps({'repsonse': 'please send post request'}),
-                            content_type="application/json")

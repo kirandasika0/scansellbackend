@@ -17,7 +17,7 @@ static PyObject* distance_km(PyObject* self, PyObject* args)
 	{
 		return NULL;
 	}
-
+	
 	//calling the haversine function
 	distance = haversine_km(uLatitude, uLongitude, sLatitude, sLongitude);
 

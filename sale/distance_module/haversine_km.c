@@ -1,4 +1,7 @@
+#include <stdio.h>
 #include <math.h>
+#include "headers.h"
+
 #define d2r (M_PI / 180.0)
 
 
@@ -15,7 +18,7 @@ double haversine_km(double lat1, double long1, double lat2, double long2)
     return d;
 }
 
-// int main(int argc, char* argv)
+// int main(int argc, char* argv[])
 // {
 // 	double l1 = 17.4509799;
 // 	double lg1 = 78.3659762;
@@ -26,5 +29,11 @@ double haversine_km(double lat1, double long1, double lat2, double long2)
 
 // 	printf("%f", answer);
 
+// 	GPSCoordinate userLocation;
+// 	userLocation.latitude = l1;
+// 	userLocation.longitude = l2;
+
+// 	printf("%f\n", userLocation.latitude);
+// 	printf("%f\n", userLocation.longitude);
 // 	return 0;
 // }
