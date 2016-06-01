@@ -271,7 +271,7 @@ def geo_feed_view(request):
             
             feed_results = geo_feed(user, user_location)
             
-            return HttpResponse(serializers.serialize("json", feed_results),
+            return HttpResponse(json.dumps(feed_results),
                                 content_type="application/json")
         else:
             return HttpResponse(json.dumps({'repsonse': 'please send requied data'}),
