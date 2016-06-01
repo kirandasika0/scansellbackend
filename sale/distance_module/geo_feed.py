@@ -1,5 +1,7 @@
 from distance_module import distance_km
 from sale.models import Sale
+from django.core import serializers
+import json
 
 MAX_SEARCH_RADIUS = 2.5
 
@@ -27,5 +29,23 @@ def geo_feed(user, location):
         else:
             continue
         
-    return feed_sales
+    response_list = list()
+    
+    for sale in feed_sales:
+        response = {
+            'pk': sale.pk,
+            'model': 'sale.sale',
+            'fields': {
+                'description': sale.description,
+                'seller_id': sale.seller_id,
+                'seller_username': sale.seller_username,
+                'price': sale.price,
+                'location': sale.location,
+                'geo_point': sale.geo_point,
+                'book': json.loads(serializers.serialize("json", [sale.book])[1:-1]),
+                'created_at': sale.created_at,
+            }
+        }
+        response_list.append(response)
+    return response_list
         
