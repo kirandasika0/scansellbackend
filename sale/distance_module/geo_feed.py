@@ -43,7 +43,7 @@ def geo_feed(user, location):
                 'location': sale.location,
                 'geo_point': sale.geo_point,
                 'book': json.loads(serializers.serialize("json", [sale.book])[1:-1]),
-                'created_at': sale.created_at,
+                'created_at': sale.created_at.strftime('%Y-%m-%d %H:%M:%S'),
             }
         }
         response_list.append(response)
