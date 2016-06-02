@@ -48,5 +48,5 @@ def search_book(request):
     if request.method == 'GET':
         search_query = request.GET.get('search_string')
         #searching for books
-        books = Book.objects.filter(full_title__contains=search_query)
+        books = Book.objects.filter(full_title__icontains=search_query, link="")
         return HttpResponse(serializers.serialize(books, 'json'))
