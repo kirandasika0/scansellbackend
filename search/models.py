@@ -22,3 +22,14 @@ class Product(models.Model):
         
     def __str__(self):
         return self.uniform_title
+        
+class StaredBook(models.Model):
+    book = models.ForeignKey('Book')
+    user = models.ForeignKey('users_b.User')
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+        
+    def __str__(self):
+        return self.book.uniform_title

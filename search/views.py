@@ -2,7 +2,8 @@ from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 import json
-from .models import Book
+from .models import Book, StaredBook
+from users_b.models import User
 from django.core import serializers
 
 def home(request):
@@ -57,7 +58,14 @@ def search_book(request):
 @csrf_exempt
 def star_book(request, p_id="1"):
     if request.method == 'POST':
-        pass
+        #make request
+        user_id = request.POST.get('user_id')
+        user = User.objects.get(user_id=user_id)
+        book = Book.objects.get(pk=p_id)
+        #creating the book
+        StaredBook.objects.create(book=book, user=user)
+        return HttpResponse(json.dumps({'response': 'done'}), 
+                            content_type="application/json")
     else:
         return HttpResponse(json.dumps({'response': 'welcome'}),
                             content_type="application/json")
