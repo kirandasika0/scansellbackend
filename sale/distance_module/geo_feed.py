@@ -1,5 +1,5 @@
 from distance_module import distance_km
-from sale.models import Sale
+from sale.models import Sale, SaleImage
 from django.core import serializers
 import json
 
@@ -43,6 +43,7 @@ def geo_feed(user, location):
                 'location': sale.location,
                 'geo_point': sale.geo_point,
                 'book': json.loads(serializers.serialize("json", [sale.book])[1:-1]),
+                'images': json.loads(serializers.serialize("json", [SaleImage.objects.filter(sale=sale)])),
                 'created_at': sale.created_at.strftime('%Y-%m-%d %H:%M:%S'),
             }
         }
