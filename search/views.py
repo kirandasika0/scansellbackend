@@ -52,4 +52,12 @@ def search_book(request):
         return HttpResponse(
             serializers.serialize("json", books),
             content_type="application/json"
-            )
+                )
+                
+@csrf_exempt
+def star_book(request, p_id="1"):
+    if request.method == 'POST':
+        pass
+    else:
+        return HttpResponse(json.dumps({'response': 'welcome'}),
+                            content_type="application/json")
