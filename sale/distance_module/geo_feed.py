@@ -48,5 +48,6 @@ def geo_feed(user, location):
             }
         }
         response_list.append(response)
+        #make sure the list is returned correct
     return response_list
         

@@ -15,11 +15,17 @@ from location import Location
 from distance_module.geo_feed import geo_feed
 from datetime import datetime
 from users_b.models import User
-
+import bmemcached
+from utils import MemcacheWrapper
 # creating a new redis server
 r = redis.Redis(host='pub-redis-18592.us-east-1-2.4.ec2.garantiadata.com',
                 port=18592,
                 password='kiran@cr7')
+mc = bmemcached.Client('pub-memcache-10484.us-east-1-1.2.ec2.garantiadata.com:10484', 
+                        'saikiran',
+                        'Skd30983')
+memcache = MemcacheWrapper(mc)
+
 # Create your views here.
 def home(request):
     return HttpResponse("Welcome to the Sale Model App")
@@ -175,10 +181,16 @@ def get_feed(request):
             except (SaleNotification.DoesNotExist) as e:
                 user_notifications = 0
             data = []
-            try:
+            #check if there in memcache
+            if memcache.get_val(user_id) == False:
                 data = generate_feed(user_id)
-            except (exceptions.UserForIDNotFoundException) as e:
-                data.append({'error': str(e)})
+                memcache.set_key_value(user_id, data)
+            else:
+                data = memcache.get_val(user_id)
+            # try:
+            #     data = generate_feed(user_id)
+            # except (exceptions.UserForIDNotFoundException) as e:
+            #     data.append({'error': str(e)})
             response = {'response': data,
                         'current_app_version': '1.0',
                         'user_notifications_number': user_notifications}

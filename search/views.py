@@ -5,6 +5,7 @@ import json
 from .models import Book, StaredBook
 from users_b.models import User
 from django.core import serializers
+from sale.models import SaleImage
 
 def home(request):
     return HttpResponse("Welcome", content_type="application/json")
@@ -69,3 +70,7 @@ def star_book(request, p_id="1"):
     else:
         return HttpResponse(json.dumps({'response': 'welcome'}),
                             content_type="application/json")
+                            
+@csrf_exempt
+def get_book_images(reqeust):
+   pass
