@@ -186,7 +186,7 @@ def get_feed(request):
                 data = generate_feed(user_id)
                 memcache.set_key_value(user_id, data)
             else:
-                data = memcache.get_val(user_id)
+                data = memcache.get_val(user_id)['data']
             # try:
             #     data = generate_feed(user_id)
             # except (exceptions.UserForIDNotFoundException) as e:
