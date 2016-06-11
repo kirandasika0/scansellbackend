@@ -62,14 +62,3 @@ class MemcacheWrapper():
 
 	def delete(self, key):
 		return self.client.delete(key)
-
-
-
-def create_user_feeds():
-    users = User.objects.all()
-    mc = bmemcached.Client('pub-memcache-10484.us-east-1-1.2.ec2.garantiadata.com:10484',
-                            'saikiran', 'Skd30983')
-    memcache = MemcacheWrapper(mc)
-    for user in users:
-        feed = generate_feed(user.user_id)
-        memcache.set_key_value(user.user_id, feed)
