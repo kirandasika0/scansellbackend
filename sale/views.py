@@ -86,7 +86,33 @@ def new_sale(request):
             for img in imgs:
                 SaleImage.objects.create(sale=sale, img_type=img[0],
                                         image_name=img[1])
-                            
+            # saving this in the memcached for the required users
+            memcached_response = {
+                'id': sale.id, 'seller_id': sale.seller_id,
+                'seller_username': sale.seller_username,
+                'description': sale.description,
+                'book': json.loads(serializers.serialize("json", [sale.book])[1:-1]),
+                'price': sale.price,
+                'location': sale.location,
+                'latitude': latitude,
+                'longitude': longitude,
+                'images': json.loads(serializers.serialize("json",SaleImage.objects.filter(sale=sale))),
+                'extra_info': sale.location
+            }
+            # check for which users we have to insert it
+            user = User.objects.get(user_id=sale.seller_id)
+            user_locale = user.locale.split(',')
+            user_locale.reverse()
+            user_locality = user_locale[1]
+            other_users = User.objects.all()
+            for o_user in other_users:
+                o_user_locale = o_user.locale.split(',')
+                o_user_locale.reverse()
+                o_user_locality = o_user_locale[1]
+                
+                if user_locality == o_user_locality:
+                    # the two locality are equal now we can insert in the memcache
+                    memcache.append_data_to_key(sale.seller_id, memcached_response)
             response = {'response': 'Your Sale has been created'}
             return HttpResponse(json.dumps(response), 
                                 content_type="application/json")

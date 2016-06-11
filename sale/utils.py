@@ -1,8 +1,6 @@
 import bmemcached
 from datetime import datetime
 from json import dumps, loads
-from sale.feed import generate_feed
-from sale.models import Sale
 # this file will never connect to the memcache server directly
 # rather it will be passed an instance of the memcache client object
 
