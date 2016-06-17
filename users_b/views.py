@@ -5,6 +5,7 @@ from .models import User
 from django.views.decorators.csrf import csrf_exempt
 import bmemcached
 from sale.utils import MemcacheWrapper
+from datetime import datetime
 #creating an instance of Memcache here
 mc = bmemcached.Client('pub-memcache-10484.us-east-1-1.2.ec2.garantiadata.com:10484', 
                         'saikiran',
@@ -40,11 +41,11 @@ def update_location(request):
     if request.method == 'POST':
         memcache_key = request.POST.get('memcache_key')
         user_id = request.POST.get('user_id')
-        latitude, longitude, created_at = request.POST.get('location_data')
+        latitude, longitude = request.POST.get('location_data')
+        created_at = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         if memcache.get_val(memcache_key):
            memcache.append_data_to_key(memcache_key, (latitude,longitude,created_at))
         else:
-            memcache_key = user_id + "_locationtack"
             memcache.set_key_value(memcache_key, (latitude, longitude, created_at))
     else:
         return HttpResponse(json.dumps({'response': 'please send data.'}),
