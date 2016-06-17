@@ -3,6 +3,13 @@ from django.http import HttpResponse
 import json
 from .models import User
 from django.views.decorators.csrf import csrf_exempt
+import bmemcached
+from sale.utils import MemcacheWrapper
+#creating an instance of Memcache here
+mc = bmemcached.Client('pub-memcache-10484.us-east-1-1.2.ec2.garantiadata.com:10484', 
+                        'saikiran',
+                        'Skd30983')
+memcache = MemcacheWrapper(mc)
 # Create your views here.
 @csrf_exempt
 def create_user(request):
@@ -26,4 +33,19 @@ def create_user(request):
                                 content_type="application/json")
     else:
         return HttpResponse(json.dumps({'response': 'please send the correct request'}), 
+                            content_type="application/json")
+                            
+@csrf_exempt
+def update_location(request):
+    if request.method == 'POST':
+        memcache_key = request.POST.get('memcache_key')
+        user_id = request.POST.get('user_id')
+        latitude, longitude, created_at = request.POST.get('location_data')
+        if memcache.get_val(memcache_key):
+           memcache.append_data_to_key(memcache_key, (latitude,longitude,created_at))
+        else:
+            memcache_key = user_id + "_locationtack"
+            memcache.set_key_value(memcache_key, (latitude, longitude, created_at))
+    else:
+        return HttpResponse(json.dumps({'response': 'please send data.'}),
                             content_type="application/json")
