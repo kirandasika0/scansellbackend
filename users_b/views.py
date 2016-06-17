@@ -44,7 +44,7 @@ def update_location(request):
         latitude= request.POST.get('location_data')
         created_at = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         if memcache.get_val(memcache_key):
-           return HttpResponse(latitude)
+           return HttpResponse(latitude[0])
         else:
             return HttpResponse(latitude)
     else:
