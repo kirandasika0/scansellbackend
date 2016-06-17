@@ -39,14 +39,17 @@ def create_user(request):
 @csrf_exempt
 def update_location(request):
     if request.method == 'POST':
-        memcache_key = request.POST.get('memcache_key')
         user_id = request.POST.get('user_id')
-        latitude= request.POST.get('location_data')
+        memcache_key = request.POST.get('memcache_key')
+        latitude = request.POST.get('latitude')
+        longitude = request.POST.get('longitude')
         created_at = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         if memcache.get_val(memcache_key):
-           return HttpResponse(latitude[0])
+            memcache.append_data_to_key(memcache_key, (latitude, longitude, created_at))
+            return HttpResponse(json.dumps({'response': 'done'}), content_type="application/json")
         else:
-            return HttpResponse(latitude)
+            memcache.set_key_value(memcache_key, (latitude, longitude, created_at))
+            return HttpResponse(json.dumps({'response': 'done'}), content_type="appliaction/json")
     else:
         return HttpResponse(json.dumps({'response': 'please send data.'}),
                             content_type="application/json")
