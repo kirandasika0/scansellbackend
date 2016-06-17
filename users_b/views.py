@@ -41,12 +41,12 @@ def update_location(request):
     if request.method == 'POST':
         memcache_key = request.POST.get('memcache_key')
         user_id = request.POST.get('user_id')
-        latitude, longitude = request.POST.get('location_data')
+        latitude= request.POST.get('location_data')
         created_at = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         if memcache.get_val(memcache_key):
-           memcache.append_data_to_key(memcache_key, (latitude,longitude,created_at))
+           return HttpResponse(latitude)
         else:
-            memcache.set_key_value(memcache_key, (latitude, longitude, created_at))
+            return HttpResponse(latitude)
     else:
         return HttpResponse(json.dumps({'response': 'please send data.'}),
                             content_type="application/json")
