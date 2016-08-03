@@ -2,7 +2,7 @@ from distance_module import distance_km
 from sale.models import Sale, SaleImage
 from django.core import serializers
 from users_b.models import User
-from location import Location
+from sale.location import Location
 import json
 
 SEARCH_RADIUS = 2.5
