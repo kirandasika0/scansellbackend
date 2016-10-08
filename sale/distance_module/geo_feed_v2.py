@@ -36,6 +36,8 @@ class GeoFeed(object):
             
             if distance <= SEARCH_RADIUS:
                 yield sale
+                
+        
         
     def serialize_sales(self, sales):
         response_list = list()
