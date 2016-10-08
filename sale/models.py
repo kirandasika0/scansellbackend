@@ -24,8 +24,16 @@ class Sale(models.Model):
         return Location(latitude, longitude)
         
     def compareTo(self, otherSale, refLocation):
-        pass
-
+        selfLocation = self.getLocation()
+        selfDistance = distance_module.distance_km(refLocation.latitude,
+                                                    refLocation.longitude,
+                                                    selfLocation.latitude,
+                                                    selfLocation.longitude)
+        otherDistance = distance_module.distance_km(refLocation.latitude,
+                                                    refLocation.longitude,
+                                                    otherSale.getLocation().latitude,
+                                                    otherSale.getLocation().longitude)
+        return selfDistance > otherDistance
     class Meta:
         ordering = ['-created_at']
 
