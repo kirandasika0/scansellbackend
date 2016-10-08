@@ -1,6 +1,6 @@
 from django.db import models
 from location import Location
-import distance_module
+import distance_module.distance_module import distance_km
 # Create your models here.
 # main sale model where the user can set the price of the book they are gonna
 # sell
@@ -25,14 +25,14 @@ class Sale(models.Model):
         
     def compareTo(self, otherSale, refLocation):
         selfLocation = self.getLocation()
-        selfDistance = distance_module.distance_km(refLocation.latitude,
-                                                    refLocation.longitude,
-                                                    selfLocation.latitude,
-                                                    selfLocation.longitude)
-        otherDistance = distance_module.distance_km(refLocation.latitude,
-                                                    refLocation.longitude,
-                                                    otherSale.getLocation().latitude,
-                                                    otherSale.getLocation().longitude)
+        selfDistance = distance_km(refLocation.latitude,
+                                    refLocation.longitude,
+                                    selfLocation.latitude,
+                                    selfLocation.longitude)
+        otherDistance = distance_km(refLocation.latitude,
+                                    refLocation.longitude,
+                                    otherSale.getLocation().latitude,
+                                    otherSale.getLocation().longitude)
         return selfDistance > otherDistance
     class Meta:
         ordering = ['-created_at']
