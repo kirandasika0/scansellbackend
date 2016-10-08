@@ -30,6 +30,8 @@ memcache = MemcacheWrapper(mc)
 
 # Create your views here.
 def home(request):
+    sale = Sale.objects.all()[0]
+    print sale.getLocation()
     return HttpResponse("Welcome to the Sale Model App")
     
     
