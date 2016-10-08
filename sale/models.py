@@ -1,6 +1,6 @@
 from django.db import models
 from location import Location
-from distance_module.distance_module import distance_km
+from distance_module import distance_km
 # Create your models here.
 # main sale model where the user can set the price of the book they are gonna
 # sell
