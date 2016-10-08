@@ -1,5 +1,6 @@
 from django.db import models
 from location import Location
+import distance_module
 # Create your models here.
 # main sale model where the user can set the price of the book they are gonna
 # sell
@@ -21,6 +22,9 @@ class Sale(models.Model):
     def getLocation(self):
         latitude, longitude = self.geo_point.split(',')
         return Location(latitude, longitude)
+        
+    def compareTo(self, otherSale, refLocation):
+        pass
 
     class Meta:
         ordering = ['-created_at']
