@@ -6,6 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 import bmemcached
 from sale.utils import MemcacheWrapper
 from datetime import datetime
+from utils import id_generator, create_locale, password_generator
 #creating an instance of Memcache here
 mc = bmemcached.Client('pub-memcache-10484.us-east-1-1.2.ec2.garantiadata.com:10484', 
                         'saikiran',
@@ -35,7 +36,36 @@ def create_user(request):
     else:
         return HttpResponse(json.dumps({'response': 'please send the correct request'}), 
                             content_type="application/json")
-                            
+
+
+@csrf_exempt
+def signUpUser(request):
+    if request.method == 'POST':
+        user_id = id_generator()
+        username = request.POST.get('username', "")
+        email = request.POST.get('email', "")
+        mobile_number = request.POST.get('mobile_number', "")
+        latitude = request.POST.get('latitude', "")
+        longitude = request.POST.get('longitude', "")
+        locale = create_locale(latitude, longitude)
+        password = password_generator(request.POST.get('password', ""))
+        redis_key = user_id + "_feed"
+        
+        # Save the user
+        user = User.objects.create(user_id=user_id, username=username,
+                                    password=password,
+                                    email=email, mobile_number=mobile_number,
+                                    locale=locale, redis_key=redis_key)
+        user.save()
+        return HttpResponse(json.dumps({'response': True}), 
+                            content_type="application/json")
+    else:
+        return HttpResponse(json.dumps({'response': 'view only allows POST reqeusts.'}),
+                            content_type="application/json")
+
+@csrf_exempt
+def login(request):
+    pass
 @csrf_exempt
 def update_location(request):
     if request.method == 'POST':

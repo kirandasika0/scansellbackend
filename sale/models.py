@@ -1,5 +1,6 @@
 from django.db import models
 from location import Location
+from haversine_km import haversine_km
 # Create your models here.
 # main sale model where the user can set the price of the book they are gonna
 # sell
@@ -23,7 +24,30 @@ class Sale(models.Model):
         return Location(latitude, longitude)
         
     def compareTo(self, otherSale, refLocation):
-        pass
+        ''' Compare two sales based on the reference location. Typically the
+        user location 
+        Args:
+        self - Model isntance of the current sale.self
+        otherSale = other instance of Sale model to compare
+        refLocation = refernce location for calculating distance (Object Type: Location)
+        
+        return: 1,0,-1
+        return-type: integer
+        '''
+        selfLocation = self.getLocation()
+        otherLocation = otherSale.getLocation()
+        selfDistance = haversine_km(refLocation, selfLocation)
+        otherDistance = haversine_km(refLocation, otherLocation)
+        
+        #compare values
+        if selfDistance > otherDistance:
+            return 1
+        elif otherDistance > selfDistance:
+            return -1
+        else:
+            return 0
+        return 0
+        
     class Meta:
         ordering = ['-created_at']
 

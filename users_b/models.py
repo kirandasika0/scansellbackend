@@ -4,6 +4,7 @@ from django.db import models
 class User(models.Model):
     user_id = models.CharField(default='', max_length='255')
     username = models.CharField(max_length='255')
+    password = models.CharField(default='', max_length='1024')
     email = models.CharField(max_length='1024')
     mobile_number = models.CharField(max_length='30')
     locale = models.TextField()
