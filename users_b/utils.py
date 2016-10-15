@@ -29,7 +29,7 @@ def create_locale(latitude, longitude):
         if "administrative_area_level_1" in obj["types"]:
             locale.append(obj["short_name"])
             
-    return ''.join(locale).upper()
+    return ','.join(locale).upper()
     
 def password_generator(password):
     s = Signer()

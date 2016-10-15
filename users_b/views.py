@@ -7,6 +7,7 @@ import bmemcached
 from sale.utils import MemcacheWrapper
 from datetime import datetime
 from utils import id_generator, create_locale, password_generator
+from django.core import serializers
 #creating an instance of Memcache here
 mc = bmemcached.Client('pub-memcache-10484.us-east-1-1.2.ec2.garantiadata.com:10484', 
                         'saikiran',
@@ -57,8 +58,10 @@ def signUpUser(request):
                                     email=email, mobile_number=mobile_number,
                                     locale=locale, redis_key=redis_key)
         user.save()
-        return HttpResponse(json.dumps({'response': True}), 
+        
+        return HttpResponse(serializers.serialize("json", [user])[1:-1],
                             content_type="application/json")
+        
     else:
         return HttpResponse(json.dumps({'response': 'view only allows POST reqeusts.'}),
                             content_type="application/json")
