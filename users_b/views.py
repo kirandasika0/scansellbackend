@@ -73,9 +73,9 @@ def login(request):
         password = password_generator(request.POST.get('password'))
         if username and password:
             #fetching the user object form database
-            user = User.objects.get(username=username)
-            #returning error if nothing found
-            if user == None:
+            try:
+                user = User.objects.get(username=username)
+            except:
                 return HttpResponse(json.dumps({'error': 'username or password incorrect'}),
                                     content_type="application/json")
             
