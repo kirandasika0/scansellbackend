@@ -68,7 +68,27 @@ def signUpUser(request):
 
 @csrf_exempt
 def login(request):
-    pass
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = password_generator(request.POST.get('password'))
+        if username and password:
+            #fetching the user object form database
+            user = User.objects.get(username=username)
+            #returning error if nothing found
+            if user == None:
+                return HttpResponse(json.dumps({'error': 'username or password incorrect'}),
+                                    content_type="application/json")
+            
+            if password == user.password:
+                return HttpResponse(serializers.serialize("json", [user])[1:-1],
+                                    cotent_type="application/json")
+            else:
+                return HttpResponse(json.dumps({'error':'username or password incorrect'}),
+                                    content_type="application/json")
+            
+    else:
+        return HttpResponse(json.dumps({'response': 'only POST requests allowed'}),
+                            content_type="application/json")
 @csrf_exempt
 def update_location(request):
     if request.method == 'POST':
