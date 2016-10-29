@@ -24,7 +24,6 @@ class Sorts():
                 i += 1
         result += y[i:]
         result += z[j:]
-        print datetime.now() - start
         return result
         
         

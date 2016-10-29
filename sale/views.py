@@ -341,3 +341,7 @@ def geo_feedv2(request):
         else:
             return HttpResponse(json.dumps({'repsonse': 'please send requied data'}),
                                 content_type="application/json")
+                                
+@csrf_exempt
+def sliderFeed(request):
+    pass

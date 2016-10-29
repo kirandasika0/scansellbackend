@@ -13,6 +13,18 @@ class User(models.Model):
     
     def __str__(self):
         return self.username
+    
+    
+    def compareTo(self, that):
+        ''' Compare self user with the parameter user.
+        Keyword-args:
+        self - an instance of the current user model
+        that - an instance of the other user model
+        
+        return: boolean
+        '''
+        
+        return self.username > that.username
         
     class Meta: 
         ordering = ['-created_at']

@@ -8,6 +8,7 @@ from sale.utils import MemcacheWrapper
 from datetime import datetime
 from utils import id_generator, create_locale, password_generator
 from django.core import serializers
+from utils import sort_usernames, contains_user
 #creating an instance of Memcache here
 mc = bmemcached.Client('pub-memcache-10484.us-east-1-1.2.ec2.garantiadata.com:10484', 
                         'saikiran',
@@ -52,15 +53,23 @@ def signUpUser(request):
         password = password_generator(request.POST.get('password', ""))
         redis_key = user_id + "_feed"
         
-        # Save the user
-        user = User.objects.create(user_id=user_id, username=username,
-                                    password=password,
-                                    email=email, mobile_number=mobile_number,
-                                    locale=locale, redis_key=redis_key)
-        user.save()
+        # check if the user is already present
+        sorted_users = sort_usernames(User.objects.all())
         
-        return HttpResponse(serializers.serialize("json", [user])[1:-1],
-                            content_type="application/json")
+        if not contains_user(username, sorted_users):
+             # Save the user
+            user = User.objects.create(user_id=user_id, username=username,
+                                        password=password,
+                                        email=email, mobile_number=mobile_number,
+                                        locale=locale, redis_key=redis_key)
+            user.save()
+        
+            return HttpResponse(serializers.serialize("json", [user])[1:-1],
+                                content_type="application/json")
+        else:
+            response = {'error': 'user with that username already exists. please try something else.'}
+            return HttpResponse(json.dumps(response),
+                                content_type="application/json")
         
     else:
         return HttpResponse(json.dumps({'response': 'view only allows POST reqeusts.'}),
