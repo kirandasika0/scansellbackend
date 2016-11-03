@@ -352,10 +352,13 @@ def sliderFeed(request):
 def hotDeals(request):
     if request.method == 'POST':
         sales = Sale.objects.all()
+        user_id = request.POST.get('id')
+        key = user_id + "_hotDeals"
         pq = MinPQ()
         for sale in sales:
             pq.enqueue(sale)
         minSale = pq.dequeue()
+        pq.serialize(key, memcache)
         return HttpResponse((serializers.serialize("json", [minSale])[1:-1]),
                             content_type="application/json")
     else:

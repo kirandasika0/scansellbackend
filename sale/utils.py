@@ -1,6 +1,7 @@
 import bmemcached
 from datetime import datetime
 from json import dumps, loads
+from hashlib import sha224
 # this file will never connect to the memcache server directly
 # rather it will be passed an instance of the memcache client object
 
@@ -151,7 +152,39 @@ class MinPQ():
         if self.mini == None:
             return None
         return self.mini.element
-
+    
+    def serialize(self, key, mc):
+        """
+        Method serializes a queue and saves it to memecache
+        :return: boolean
+        """
+        if self.size == 0:
+            return False
+        
+        queue = []
+        n = self.mini
+        while n is not None:
+            queue.append(n.element)
+            n = n.next
+        
+        return mc.set_key_value(key, queue)
+        
+    
+    
+    def deserialize(self, key, mc):
+        """
+        :return: MinPQ
+        """
+        if key is None:
+            return None
+        
+        value = mc.get_val(key)
+        
+        if value is None:
+            return None
+        
+        return None
+        
 class LinkedNode():
     def __init__(self, element, next=None, prev=None):
         self.element = element
