@@ -18,6 +18,7 @@ from users_b.models import User
 import bmemcached
 from utils import MemcacheWrapper
 from distance_module.geo_feed_v2 import GeoFeed
+from utils import MinPQ
 
 # creating a new redis server
 r = redis.Redis(host='pub-redis-18592.us-east-1-2.4.ec2.garantiadata.com',
@@ -345,3 +346,18 @@ def geo_feedv2(request):
 @csrf_exempt
 def sliderFeed(request):
     pass
+
+
+@csrf_exempt
+def hotDeals(request):
+    if request.method == 'POST':
+        sales = Sale.objects.all()
+        pq = MinPQ()
+        for sale in sales:
+            pq.enqueue(sale)
+        minSale = pq.dequeue()
+        return HttpResponse((serializers.serialize("json", [minSale])[1:-1]),
+                            content_type="application/json")
+    else:
+        return HttpResponse(json.dumps({'response', 'Only POST requests are allowed.'}),
+                            content_type="application/json")

@@ -22,7 +22,8 @@ class Sale(models.Model):
     def getLocation(self):
         latitude, longitude = self.geo_point.split(',')
         return Location(latitude, longitude)
-        
+     
+     
     def compareTo(self, otherSale, refLocation):
         ''' Compare two sales based on the reference location. Typically the
         user location 
@@ -43,6 +44,15 @@ class Sale(models.Model):
         if selfDistance > otherDistance:
             return 1
         elif otherDistance > selfDistance:
+            return -1
+        else:
+            return 0
+        return 0
+      
+    def comparePriceTo(self, otherSale):
+        if int(self.price) > int(otherSale.price):
+            return 1
+        elif int(self.price) < int(otherSale.price):
             return -1
         else:
             return 0

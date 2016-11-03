@@ -61,4 +61,121 @@ class MemcacheWrapper():
 
 	def delete(self, key):
 		return self.client.delete(key)
-	
+
+
+
+
+
+
+''' ======================================================================== '''
+''' CODE FOR FINDING BEST DEALS '''
+class MinPQ():
+    def __init__(self, mini=None, maxi=None, size=0):
+        self.mini = mini
+        self.maxi = maxi
+        self.size = size
+        self.current = None
+
+    def getSize(self):
+        return self.size
+
+    def isEmpty(self):
+        return self.size is 0
+
+    def enqueue(self, e=None):
+        # place element in the sorted postion of natural order
+        if e is None:
+            return False
+
+        # element to be added in PQ
+        x = LinkedNode(e)
+
+        if self.isEmpty():
+            self.mini = x
+            self.maxi = x
+            self.size += 1
+            return True
+
+        n = self.mini
+        while n is not None:
+            if e.comparePriceTo(n.element) < 0 and n is self.mini:
+                x.next = n
+                n.prev = x
+                self.mini = x
+                self.size += 1
+                return True
+
+            elif e.comparePriceTo(n.element) > 0 and n is self.maxi:
+                n.next = x
+                x.prev = n
+                self.maxi = x
+                self.size += 1
+                return True
+
+            elif e.comparePriceTo(n.element) < 0:
+                n.prev.next = x
+                x.prev = n.prev
+                x.next = n
+                n.prev = x
+                self.size += 1
+                return True
+
+            # elif e.comparePriceTo(n.element) == 0:
+            #     n.next.prev = x
+            #     x.next = n.next
+            #     n.next = x
+            #     x.prev = n
+            #     self.size += 1
+            #     return True
+
+            n = n.next
+        return False
+
+    def dequeue(self):
+        if self.size == 0:
+            return None
+
+        if self.size == 1:
+            n = self.maxi.element
+            self.mini = None
+            self.maxi = None
+            return n
+
+        n = self.mini.element
+        self.mini = self.mini.next
+        self.mini.prev = None
+        self.size -= 1
+        return n
+
+    def peek(self):
+        if self.mini == None:
+            return None
+        return self.mini.element
+
+class LinkedNode():
+    def __init__(self, element, next=None, prev=None):
+        self.element = element
+        self.next = next
+        self.prev = prev
+
+    def __str__(self):
+        return self.element
+
+class TestClass(object):
+    def __init__(self, x):
+        self.x = x
+
+
+    def comparePriceTo(self, y):
+        if self.x > y.x:
+            return 1
+        elif self.x < y.x:
+            return -1
+        else:
+            return 0
+
+    def __str__(self):
+        return self.x
+        
+    def __repr__(self):
+        return self.x
