@@ -16,4 +16,5 @@ urlpatterns = [
     url(r'^geo_feed/', views.geo_feed_view),
     url(r'geo_feedv2/', views.geo_feedv2),
     url(r'slider_feed/', views.sliderFeed),
+    url(r'hot_deals/', views.hotDeals),
 ]
