@@ -357,10 +357,8 @@ def hotDeals(request):
         pq = MinPQ()
         for sale in sales:
             pq.enqueue(sale)
+        
         minSale = pq.dequeue()
-        if pq.serialize(key, memcache):
-            return HttpResponse(json.dumps({'error': 'memcache error'}),
-                                content_type="application/json")
         return HttpResponse((serializers.serialize("json", [minSale])[1:-1]),
                             content_type="application/json")
     else:
