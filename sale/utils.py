@@ -164,7 +164,7 @@ class MinPQ():
         queue = []
         n = self.mini
         while n is not None:
-            queue.append(n.element)
+            queue.append(n.element.pk)
             n = n.next
         
         return mc.set_key_value(key, queue)
