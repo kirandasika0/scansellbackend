@@ -359,5 +359,5 @@ def hotDeals(request):
         return HttpResponse((serializers.serialize("json", [minSale])[1:-1]),
                             content_type="application/json")
     else:
-        return HttpResponse(json.dumps({'response', 'Only POST requests are allowed.'}),
+        return HttpResponse(json.dumps({'response': 'Only POST requests are allowed.'}),
                             content_type="application/json")
