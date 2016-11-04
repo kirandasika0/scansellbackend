@@ -24,9 +24,9 @@ from utils import MinPQ
 r = redis.Redis(host='pub-redis-18592.us-east-1-2.4.ec2.garantiadata.com',
                 port=18592,
                 password='kiran@cr7')
-mc = bmemcached.Client('pub-memcache-10484.us-east-1-1.2.ec2.garantiadata.com:10484', 
-                        'saikiran',
-                        'Skd30983')
+mc = bmemcached.Client('pub-memcache-17929.us-east-1-2.1.ec2.garantiadata.com:17929', 
+                        'kiran',
+                        'Skd3098309^')
 memcache = MemcacheWrapper(mc)
 
 # Create your views here.
@@ -351,16 +351,24 @@ def sliderFeed(request):
 @csrf_exempt
 def hotDeals(request):
     if request.method == 'POST':
-        sales = Sale.objects.all()
-        user_id = request.POST.get('id')
-        key = user_id + "_hotDeals"
+        userId = request.POST.get('user_id')
+        dealsKey = userId + "_hotDeals"
         pq = MinPQ()
-        for sale in sales:
-            pq.enqueue(sale)
-        
-        minSale = pq.dequeue()
-        return HttpResponse((serializers.serialize("json", [minSale])[1:-1]),
-                            content_type="application/json")
+        pq.deserialize(dealsKey, memcache)
+        if pq.size == 0:
+            # make a new queue and save it
+            sales = Sale.objects.all()
+            for sale in sales:
+                pq.enqueue(sale)
+            minSale = pq.dequeue()
+            pq.serialize(dealsKey, memcache)
+            return HttpResponse(serializers.serialize("json", [minSale])[1:-1],
+                                content_type="application/json")
+        else:
+            minSale = pq.dequeue()
+            pq.serialize(dealsKey, memcache)
+            return HttpResponse(serializers.serialize("json", [minSale])[1:-1],
+                                content_type="application/json")
     else:
         return HttpResponse(json.dumps({'response': 'Only POST requests are allowed.'}),
                             content_type="application/json")

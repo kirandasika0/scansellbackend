@@ -2,6 +2,7 @@ import bmemcached
 from datetime import datetime
 from json import dumps, loads
 from hashlib import sha224
+from .models import Sale
 # this file will never connect to the memcache server directly
 # rather it will be passed an instance of the memcache client object
 
@@ -28,7 +29,7 @@ class MemcacheWrapper():
 
 	def get_val(self, key):
 		if self.client.get(key):
-			response = loads(self.client.get(key))
+			response = loads(self.client.get(key))['data']
 		else:
 			response = False
 		return response
@@ -161,30 +162,38 @@ class MinPQ():
         if self.size == 0:
             return False
         
-        queue = []
+        queueList = []
+        
         n = self.mini
         while n is not None:
-            queue.append(n.element.pk)
+            queueList.append(n.element.pk)
             n = n.next
         
-        return mc.set_key_value(key, queue)
+        return mc.set_key_value(key, queueList)
+        
         
     
     
     def deserialize(self, key, mc):
         """
+        This method deserializes and creates an entire PriorityQueue from a
+        provided key and the memcache object.
+        For the deserialize to work the size of the queue must be equal to 0.
         :return: MinPQ
         """
-        if key is None:
+        if self.size is not 0:
             return None
-        
-        value = mc.get_val(key)
-        
-        if value is None:
+            
+        savedData = mc.get_val(key)
+        if savedData is False:
             return None
+            
+        for pk in savedData:
+            self.enqueue(Sale.objects.get(pk=pk))
         
-        return None
-        
+        return self
+
+
 class LinkedNode():
     def __init__(self, element, next=None, prev=None):
         self.element = element
