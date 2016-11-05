@@ -74,3 +74,18 @@ def star_book(request, p_id="1"):
 @csrf_exempt
 def get_book_images(reqeust):
    pass
+   
+@csrf_exempt
+def bookDetails(request):
+    if request.method == 'POST':
+        bookId = request.POST.get('book_id')
+        if bookId is not None:
+            book = Book.objects.get(pk=bookId)
+            return HttpResponse(serializers.serialize("json", [book])[1:-1],
+                                content_type="application/json")
+        else:
+            return HttpResponse(json.dumps({'error': 'id parameter was missing.'}),
+                                content_type="application/json")
+    else:
+        return HttpResponse(json.dumps({'error': 'Only POST requsest is allowed.'}),
+                            content_type="application/json")
