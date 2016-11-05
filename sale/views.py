@@ -368,3 +368,23 @@ def hotDeals(request):
     else:
         return HttpResponse(json.dumps({'response': 'Only POST requests are allowed.'}),
                             content_type="application/json")
+                            
+                            
+# Helper methods
+def getSaleImages(request):
+    if request.method == 'POST':
+        saleId = request.POST.get('sale_id')
+        sale = Sale.objects.get(pk=int(saleId))
+        saleImages = SaleImage.objects.filter(sale=sale)
+        if saleImages:
+            return HttpResponse(serializers.serialize("json", saleImages),
+                                content_type="application/json")
+        else:
+            return HttpResponse(json.dumps({'error': 'An unknown error occured'}),
+                                content_type="application/json")
+    else:
+        return HttpResponse(json.dumps({'error':'Please send a POST request'}),
+                            content_type="application/json")
+
+
+# END HELPER METHODS
