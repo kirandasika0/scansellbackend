@@ -371,6 +371,7 @@ def hotDeals(request):
                             
                             
 # Helper methods
+@csrf_exempt
 def getSaleImages(request):
     if request.method == 'POST':
         saleId = request.POST.get('sale_id')
