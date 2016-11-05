@@ -215,11 +215,7 @@ def get_feed(request):
                 user_notifications = 0
             data = []
             #check if there in memcache
-            if memcache.get_val(user_id) == False:
-                data = generate_feed(user_id)
-                memcache.set_key_value(user_id, data)
-            else:
-                data = memcache.get_val(user_id)['data']
+            data = generate_feed(user_id)
             # try:
             #     data = generate_feed(user_id)
             # except (exceptions.UserForIDNotFoundException) as e:
