@@ -19,4 +19,5 @@ urlpatterns = [
     url(r'hot_deals/', views.hotDeals),
     url(r'sale_images/',views.getSaleImages),
     url(r'place_bid/', views.placeBid),
+    url(r'bid_stats/', views.bidStats),
 ]

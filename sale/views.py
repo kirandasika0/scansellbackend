@@ -426,3 +426,20 @@ def placeBid(request):
     else:
         return HttpResponse(json.dumps({'response': 'Please send POST request.'}),
                             content_type="application/json")
+
+@csrf_exempt
+def bidStats(request):
+    if request.method == 'POST':
+        saleId = request.POST.get('sale_id')
+        bidCacheKey = saleId + "_bid"
+        if memcache.get_val(bidCacheKey) is not False:
+            bid = Bid()
+            bid.deserialize(bidCacheKey, memcache)
+            return HttpResponse(json.dumps(bid.stats()),
+                                content_type="application/json")
+        else:
+            return HttpResponse(json.dumps({'error': 'error getting stats'}),
+                                content_type="application/json")
+    else:
+        return HttpResponse(json.dumps({'response': 'send POST request.'}),
+                            content_type="application/json")

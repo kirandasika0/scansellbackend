@@ -59,6 +59,11 @@ class Bid():
             n = n.next
         statData['users'] = users
         statData['prices'] = prices
+        userId, userBidPrice = statData['highest_bidder'].split('-')
+        statData['highest_bidder'] = {
+            'user_id': userId,
+            'bid_price': userBidPrice
+        }
         return statData
 
     def serialize(self, mc):
