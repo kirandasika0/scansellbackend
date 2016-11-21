@@ -38,6 +38,29 @@ class Bid():
             self.bidderPQ.enqueue(bidUsr)
             return True
 
+    def stats(self):
+        """
+        This method returns a dict with some statistics regarding the current bid.
+
+        :return: dict
+        """
+        # Checking if bidData is available
+        if self.bidData is None:
+            return None
+
+        statData = dict(self.bidData)
+        statData['bidders_count'] = self.bidderPQ.size
+        users = []
+        prices = []
+        n = self.bidderPQ.max
+        while n is not None:
+            users.append(n.element.pk)
+            prices.append(n.element.bidPrice)
+            n = n.next
+        statData['users'] = users
+        statData['prices'] = prices
+        return statData
+
     def serialize(self, mc):
         # serialize the priority queue
         pqList = []
