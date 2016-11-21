@@ -398,7 +398,7 @@ def placeBid(request):
         saleId = request.POST.get('sale_id')
         userId = request.POST.get('user_id')
         bidPrice = request.POST.get('bid_price')
-        user = User.objects.get(pk=userId)
+        user = User.objects.get(user_id=userId)
         bidCacheKey = saleId + "_bid"
         if memcache.get_val(bidCacheKey) == False:
             # This is the first bid on the sale
