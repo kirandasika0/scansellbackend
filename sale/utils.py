@@ -193,7 +193,104 @@ class MinPQ():
         
         return self
 
+""" ============================== """
+class MaxPQ():
+    def __init__(self):
+        self.max = None
+        self.min = None
+        self.size = 0
 
+    def getSize(self):
+        return self.size
+
+    def isEmpty(self):
+        return self.size == 0
+
+    def enqueue(self, e=None):
+        if e is None:
+            return False
+
+        x = LinkedNode(e)
+
+        if self.isEmpty():
+            self.max = x
+            self.min = x
+            self.size += 1
+            return True
+
+        n = self.max
+        while n is not None:
+            if e.comparePriceTo(n.element) > 0 and n is self.max:
+                x.next = n
+                n.prev = x
+                self.max = x
+                self.size += 1
+                return True
+
+            elif e.comparePriceTo(n.element) < 0 and n is self.min:
+                n.next = x
+                x.prev = n
+                self.min = x
+                self.size += 1
+                return True
+
+            elif e.comparePriceTo(n.element) > 0:
+                n.prev.next = x
+                x.prev = n.prev
+                x.next = n
+                n.prev = x
+                self.size += 1
+                return True
+
+            n = n.next
+
+
+    def dequeue(self):
+        result = self.max.element
+        self.max = self.max.next
+        return result
+
+    def peek(self):
+        return self.max.element
+        
+    def serialize(self, key, mc):
+        """
+        Method serializes a Max PriorityQueue and saves it in memcache
+        
+        :return: bool
+        """
+        if self.size == 0:
+            return False
+        
+        queueList = []
+        n = self.max
+        
+        while n is not None:
+            queueList.append(n.element.pk)
+        
+        return mc.set_key_value(key, queueList)
+        
+    
+    def deserialize(self, key, mc):
+        """
+        Method Deserializes a MaxPriorityQueue from disk and gives it
+        
+        :return: MaxPQ
+        """
+        if self.size is not 0:
+            return None
+        
+        savedData = mc.get_val(key)
+        if savedData is False:
+            return None
+            
+        for pk in savedData:
+            self.enqueue(Sale.objects.get(pk=pk))
+        
+        return self
+            
+
+""" ============================ """
 class LinkedNode():
     def __init__(self, element, next=None, prev=None):
         self.element = element
@@ -221,3 +318,18 @@ class TestClass(object):
         
     def __repr__(self):
         return self.x
+
+
+
+def binary_search(a, target, comparator):
+    lo = 0
+    hi = len(a) - 1
+    i = 0
+    mid = (lo + hi) / 2
+    while lo <= hi:
+        if a[lo].comparator(a[mid]) < 0:
+            hi = mid - 1
+        elif a[lo].comparator(a[mid]) > 0:
+            lo = mid + 1
+        else:
+            return mid
