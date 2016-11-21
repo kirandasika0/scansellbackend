@@ -55,6 +55,7 @@ class Bid():
             userId, bidPrice = user.split('-')
             self.bidderPQ.enqueue(BidUser(userId, bidPrice))
         self.cacheKey = cacheKey
+        del self.bidData['bidders']
         return True
 
 
