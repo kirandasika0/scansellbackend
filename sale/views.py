@@ -19,12 +19,13 @@ import bmemcached
 from utils import MemcacheWrapper
 from distance_module.geo_feed_v2 import GeoFeed
 from utils import MinPQ
+from bid import Bid
 
 # creating a new redis server
 r = redis.Redis(host='pub-redis-18592.us-east-1-2.4.ec2.garantiadata.com',
                 port=18592,
                 password='kiran@cr7')
-mc = bmemcached.Client('pub-memcache-17929.us-east-1-2.1.ec2.garantiadata.com:17929', 
+mc = bmemcached.Client('pub-memcache-17929.us-east-1-2.1.ec2.garantiadata.com:17929',
                         'kiran',
                         'Skd3098309^')
 memcache = MemcacheWrapper(mc)
@@ -36,8 +37,8 @@ def home(request):
     refLocation = Location(32.5903056,-85.5284747)
     print sale.compareTo(sale2, refLocation)
     return HttpResponse("Welcome to the Sale Model App")
-    
-    
+
+
 #simple title case string view for better type face on app
 @csrf_exempt
 def title_case_string(request):
@@ -48,7 +49,7 @@ def title_case_string(request):
     else:
         return HttpResponse(json.dumps({'response': 'please send the correct request'}),
                             content_type="application/json")
-    
+
 @csrf_exempt
 def new_sale(request):
     if request.method == 'POST':
@@ -74,7 +75,7 @@ def new_sale(request):
                                             uniform_title=uniform_title,
                                             ean_13=ean_13)
             new_book.save()
-            #the book is now saved we have to save the sale and enter it in 
+            #the book is now saved we have to save the sale and enter it in
             #the correct redis bucket for the user
             sale = Sale.objects.create(seller_id=seller_id, seller_username=seller_username,
                                 book=new_book, description=description, price=price,
@@ -116,18 +117,18 @@ def new_sale(request):
                 o_user_locale = o_user.locale.split(',')
                 o_user_locale.reverse()
                 o_user_locality = o_user_locale[1]
-                
+
                 if user_locality == o_user_locality:
                     # the two locality are equal now we can insert in the memcache
                     memcache.append_data_to_key(sale.seller_id, memcached_response)
             response = {'response': 'Your Sale has been created'}
-            return HttpResponse(json.dumps(response), 
+            return HttpResponse(json.dumps(response),
                                 content_type="application/json")
     else:
         return HttpResponse(json.dumps({'response': 'please send the correct request'}),
                             content_type="application/json")
-                            
-                            
+
+
 
 #view for new sale interest
 @csrf_exempt
@@ -149,28 +150,28 @@ def new_sale_interest(request):
     else:
         return HttpResponse(json.dumps({'response': 'Please send the correct request'}),
                             content_type="application/json")
-                            
-                            
+
+
 @csrf_exempt
 def new_sale_insert(request):
     if request.method == 'POST':
-        return HttpResponse(json.dumps({'response': 0}), 
+        return HttpResponse(json.dumps({'response': 0}),
                             content_type="application/json")
     else:
         return HttpResponse(json.dumps({'response': 'Please send the correct request'}),
                             content_type="application/json")
-                            
-                            
+
+
 def redis_test(request):
     return HttpResponse("redis cache")
-    
-                        
-                        
+
+
+
 
 @csrf_exempt
 def create_locale(request):
-    ''' This view creates the address for the sale. 
-        Address format: 
+    ''' This view creates the address for the sale.
+        Address format:
         Route, Admininstrative Area Level 3 , Locality, Admininstrative Area Level 2, Admininstrative Level 1,
         State'''
     if request.method == 'POST':
@@ -199,10 +200,10 @@ def create_locale(request):
         return HttpResponse(json.dumps({'response': return_response}),
                             content_type="application/json")
     else:
-        return HttpResponse(json.dumps({'response': 'please send the correct request'}), 
+        return HttpResponse(json.dumps({'response': 'please send the correct request'}),
                             content_type="application/json")
-                            
-                            
+
+
 @csrf_exempt
 def get_feed(request):
     if request.method == 'GET':
@@ -230,12 +231,12 @@ def get_feed(request):
     else:
         return HttpResponse(json.dumps({'response': 'Please send the correct request'}),
                             content_type="application/json")
-       
-                            
+
+
 @csrf_exempt
 def sale_notification(request):
     if request.method == 'POST':
-        #get the notif data 
+        #get the notif data
         data = {'notif_type': request.POST.get('notif_type', ""),
                 'seller_id': request.POST.get('seller_id', ""),
                 'seller_username': request.POST.get('seller_username', ""),
@@ -251,7 +252,7 @@ def sale_notification(request):
     else:
         return HttpResponse(json.dumps({'response': 'please send the correct request'}),
                             content_type="application/json")
-                            
+
 @csrf_exempt
 def get_notifications(request):
     user_id = request.GET.get('user_id', "")
@@ -270,7 +271,7 @@ def get_notifications(request):
     else:
         return HttpResponse(json.dumps({'response': 'user_id not found'}),
                             content_type="application/json")
-                            
+
 @csrf_exempt
 def delete_notification(request):
     if request.method == 'POST':
@@ -295,8 +296,8 @@ def test_patch(request):
         return HttpResponse('Welcome this is a patch request')
     else:
         return HttpResponse('Fuck you')
-        
-        
+
+
 
 @csrf_exempt
 def geo_feed_view(request):
@@ -304,41 +305,41 @@ def geo_feed_view(request):
         user_id = request.GET.get('user_id')
         latitude = float(request.GET.get('lat'))
         longitude = float(request.GET.get('long'))
-        
+
         if user_id and latitude and longitude:
             current_time = datetime.now()
             user_location = Location(latitude, longitude, current_time)
             user = User.objects.get(user_id=user_id)
-            
+
             feed_results = geo_feed(user, user_location)
-            
+
             return HttpResponse(json.dumps(feed_results),
                                 content_type="application/json")
         else:
             return HttpResponse(json.dumps({'repsonse': 'please send requied data'}),
                                 content_type="application/json")
-                                
+
 @csrf_exempt
 def geo_feedv2(request):
     if request.method == 'GET':
         user_id = request.GET.get('user_id')
         latitude = float(request.GET.get('lat'))
         longitude = float(request.GET.get('long'))
-        
+
         if user_id and latitude and longitude:
             current_time = datetime.now()
             user_location = Location(latitude, longitude, current_time)
             user = User.objects.get(user_id=user_id)
-            
+
             geo_feed = GeoFeed(user, location)
-            
-            
+
+
             return HttpResponse(json.dumps(geo_feed.serialize_sales()),
                                 content_type="application/json")
         else:
             return HttpResponse(json.dumps({'repsonse': 'please send requied data'}),
                                 content_type="application/json")
-                                
+
 @csrf_exempt
 def sliderFeed(request):
     pass
@@ -368,8 +369,8 @@ def hotDeals(request):
     else:
         return HttpResponse(json.dumps({'response': 'Only POST requests are allowed.'}),
                             content_type="application/json")
-                            
-                            
+
+
 # Helper methods
 @csrf_exempt
 def getSaleImages(request):
@@ -389,3 +390,39 @@ def getSaleImages(request):
 
 
 # END HELPER METHODS
+
+
+@csrf_exempt
+def placeBid(request):
+    if request.method == 'POST':
+        saleId = request.POST.get('sale_id')
+        userId = request.POST.get('user_id')
+        bidPrice = request.POST.get('bid_price')
+        user = User.objects.get(pk=userId)
+        bidCacheKey = saleId + "_bid"
+        if memcache.get_val(bidCacheKey) == False:
+            # This is the first bid on the sale
+            sale = Sale.objects.get(pk=saleId)
+            # Creating a new bid from Bid Class
+            bid = Bid(sale)
+            bid.place_bid(user, bidPrice=bidPrice)
+            if bid.serialize(memcache):
+                return HttpResponse(json.dumps({'response': True}),
+                                    content_type="application/json")
+            else:
+                return HttpResponse(json.dumps({'error': 'error bidding.'}),
+                                    content_type="application/json")
+        else:
+            # Bid is already there now deserialize it.
+            bid = Bid()
+            bid.deserialize(bidCacheKey, memcache)
+            bid.place_bid(user, bidPrice=bidPrice)
+            if bid.serialize(memcache):
+                return HttpResponse(json.dumps({'response': True}),
+                                    content_type="application/json")
+            else:
+                return HttpResponse(json.dumps({'error': 'error bidding.'}),
+                                    content_type="application/json")
+    else:
+        return HttpResponse(json.dumps({'response': 'Please send POST request.'}),
+                            content_type="application/json")

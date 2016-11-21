@@ -18,4 +18,5 @@ urlpatterns = [
     url(r'slider_feed/', views.sliderFeed),
     url(r'hot_deals/', views.hotDeals),
     url(r'sale_images/',views.getSaleImages),
+    url(r'place_bid/', views.placeBid),
 ]
