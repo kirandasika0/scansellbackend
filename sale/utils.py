@@ -153,7 +153,7 @@ class MinPQ():
         if self.mini == None:
             return None
         return self.mini.element
-    
+
     def serialize(self, key, mc):
         """
         Method serializes a queue and saves it to memecache
@@ -161,19 +161,19 @@ class MinPQ():
         """
         if self.size == 0:
             return False
-        
+
         queueList = []
-        
+
         n = self.mini
         while n is not None:
             queueList.append(n.element.pk)
             n = n.next
-        
+
         return mc.set_key_value(key, queueList)
-        
-        
-    
-    
+
+
+
+
     def deserialize(self, key, mc):
         """
         This method deserializes and creates an entire PriorityQueue from a
@@ -183,14 +183,14 @@ class MinPQ():
         """
         if self.size is not 0:
             return None
-            
+
         savedData = mc.get_val(key)
         if savedData is False:
             return None
-            
+
         for pk in savedData:
             self.enqueue(Sale.objects.get(pk=pk))
-        
+
         return self
 
 """ ============================== """
@@ -252,43 +252,43 @@ class MaxPQ():
 
     def peek(self):
         return self.max.element
-        
+
     def serialize(self, key, mc):
         """
         Method serializes a Max PriorityQueue and saves it in memcache
-        
+
         :return: bool
         """
         if self.size == 0:
             return False
-        
+
         queueList = []
         n = self.max
-        
+
         while n is not None:
             queueList.append(n.element.pk)
-        
+
         return mc.set_key_value(key, queueList)
-        
-    
+
+
     def deserialize(self, key, mc):
         """
         Method Deserializes a MaxPriorityQueue from disk and gives it
-        
+
         :return: MaxPQ
         """
         if self.size is not 0:
             return None
-        
+
         savedData = mc.get_val(key)
         if savedData is False:
             return None
-            
+
         for pk in savedData:
             self.enqueue(Sale.objects.get(pk=pk))
-        
+
         return self
-            
+
 
 """ ============================ """
 class LinkedNode():
@@ -315,7 +315,7 @@ class TestClass(object):
 
     def __str__(self):
         return self.x
-        
+
     def __repr__(self):
         return self.x
 
