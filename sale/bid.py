@@ -85,7 +85,7 @@ class Bid():
 
 class BidUser():
     def __init__(self, pk, bidPrice):
-        self.pk = int(pk)
+        self.pk = pk
         self.bidPrice = int(bidPrice)
 
     def getPk(self):
