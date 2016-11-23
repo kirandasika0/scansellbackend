@@ -42,7 +42,7 @@ class VenmoWrapper():
 
 
 class VenmoUser():
-    def __init__(self, userIn, accessTokenIn=None):
+    def __init__(self, userIn=None, accessTokenIn=None):
         self.user = userIn
         self.accessToken = accessTokenIn
 
@@ -74,17 +74,15 @@ class VenmoRequest():
 
     def serialize(self):
         response = {
-            'pk': self.user.user.pk,
-            'user_id': self.user.user.user_id,
-            'access_token': self.user.accessToken,
+            'user': self.user.serialize(),
             'charge': str(self.charge),
             'auto_charge': self.autoCharge
         }
         return response
-        
+
     def deserialize(self, dataIn):
-        self.user = VenmoUser(User.objects.get(pk=dataIn['pk']),
-                                dataIn['access_token'])
+        self.user = VenmoUser()
+        self.user.deserialize(dataIn['user'])
         self.charge = dataIn['charge']
         self.autoCharge = dataIn['auto_charge']
         return True
