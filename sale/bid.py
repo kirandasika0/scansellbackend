@@ -35,8 +35,8 @@ class Bid():
         if bidPrice > maxBidderPQPrice:
             # new price is the highest price
             self.bidData['highest_bidder'] = bidUsr.serialize()
-            self.bidderPQ.enqueue(bidUsr)
-            return True
+        self.bidderPQ.enqueue(bidUsr)
+        return True
 
     def stats(self):
         """
