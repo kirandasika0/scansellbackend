@@ -6,6 +6,7 @@ from .models import Book, StaredBook
 from users_b.models import User
 from django.core import serializers
 from sale.models import SaleImage
+from search_book import cacheBook
 
 def home(request):
     return HttpResponse("Welcome", content_type="application/json")
@@ -89,3 +90,16 @@ def bookDetails(request):
     else:
         return HttpResponse(json.dumps({'error': 'Only POST requsest is allowed.'}),
                             content_type="application/json")
+
+
+@csrf_exempt
+def cacheBookDetails(request):
+    if request.method == 'POST':
+        data = request.POST.get('book_details')
+        #cache the book here
+        return HttpResponse(json.dumps({'response': 'book cached'},
+                            content_type="application/json"))
+    else:
+        return HttpResponse(json.dumps({'response': 'only POST requests'},
+                            content_type="application/json"))
+

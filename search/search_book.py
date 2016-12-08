@@ -57,3 +57,28 @@ def searchGoogleBook(isbn):
         items.append(book)
     responseDict['items'] = items
     return responseDict
+
+
+def cachedBook(isbnNumber, memcache):
+    """
+    Check if the book is already cached in memcache
+    """
+    cachedBooks = None
+    if memcache.get_val("cached_books") == False:
+        cachedBooks = {}
+    else:
+        cachedBooks = memcache.get_val("cached_books")
+    
+    if isbnNumber in cachedBooks.keys():
+        return cachedBooks[isbnNumber]
+    
+    return cachedBooks
+
+def cacheBook(isbnNumber, memcache, data=None):
+    bookData = {
+            'isbn_number': isbnNumber
+            }
+    bookData['data'] = data
+
+    return memcache.set_key_value(isbnNumber, bookData)
+

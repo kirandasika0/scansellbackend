@@ -32,7 +32,7 @@ class Bid():
 
         # Checking if the max in the bidderPQ is less than the argument price
         maxBidderPQPrice = self.bidderPQ.peek().bidPrice
-        if maxBidderPQPrice < bidPrice:
+        if bidPrice > maxBidderPQPrice:
             # new price is the highest price
             self.bidData['highest_bidder'] = bidUsr.serialize()
             self.bidderPQ.enqueue(bidUsr)
