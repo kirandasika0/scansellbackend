@@ -12,14 +12,15 @@ from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 import exceptions
 from location import Location
-from distance_module.geo_feed import geo_feed
+#from distance_module.geo_feed import geo_feed
 from datetime import datetime
 from users_b.models import User
 import bmemcached
 from utils import MemcacheWrapper
-from distance_module.geo_feed_v2 import GeoFeed
+#from distance_module.geo_feed_v2 import GeoFeed
 from utils import MinPQ
 from bid import Bid
+import pdb
 
 # creating a new redis server
 r = redis.Redis(host='pub-redis-18592.us-east-1-2.4.ec2.garantiadata.com',
@@ -395,6 +396,7 @@ def getSaleImages(request):
 @csrf_exempt
 def placeBid(request):
     if request.method == 'POST':
+        pdb.set_trace()
         saleId = request.POST.get('sale_id')
         userId = request.POST.get('user_id')
         bidPrice = request.POST.get('bid_price')

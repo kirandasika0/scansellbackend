@@ -32,7 +32,7 @@ class Bid():
 
         # Checking if the max in the bidderPQ is less than the argument price
         maxBidderPQPrice = self.bidderPQ.peek().bidPrice
-        if bidPrice > maxBidderPQPrice:
+        if int(bidPrice) > int(maxBidderPQPrice):
             # new price is the highest price
             self.bidData['highest_bidder'] = bidUsr.serialize()
         self.bidderPQ.enqueue(bidUsr)
@@ -51,7 +51,7 @@ class Bid():
         # Checking if there is a highest bidder
         if "highest_bidder" not in list(self.bidData.keys()):
             return None
-        
+
         statData = dict(self.bidData)
         statData['bidders_count'] = self.bidderPQ.size
         users = []
