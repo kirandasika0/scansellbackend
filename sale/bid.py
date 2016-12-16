@@ -48,6 +48,10 @@ class Bid():
         if self.bidData is None:
             return None
 
+        # Checking if there is a highest bidder
+        if "highest_bidder" not in list(self.bidData.keys()):
+            return None
+        
         statData = dict(self.bidData)
         statData['bidders_count'] = self.bidderPQ.size
         users = []
