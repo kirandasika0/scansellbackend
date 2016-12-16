@@ -12,12 +12,12 @@ from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 import exceptions
 from location import Location
-#from distance_module.geo_feed import geo_feed
+from distance_module.geo_feed import geo_feed
 from datetime import datetime
 from users_b.models import User
 import bmemcached
 from utils import MemcacheWrapper
-#from distance_module.geo_feed_v2 import GeoFeed
+from distance_module.geo_feed_v2 import GeoFeed
 from utils import MinPQ
 from bid import Bid
 
