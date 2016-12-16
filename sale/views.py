@@ -388,7 +388,19 @@ def getSaleImages(request):
         return HttpResponse(json.dumps({'error':'Please send a POST request'}),
                             content_type="application/json")
 
-
+@csrf_exempt
+def markSold(request):
+    if request.method == 'POST':
+        saleId = request.POST.get('sale_id')
+        sale = Sale.objects.get(pk=saleId)
+        # marking given sale as sold
+        sale.sold = True
+        sale.save()
+        return HttpResponse(json.dumps({'response': True}),
+                            content_type="application/json")
+    else:
+        return HttpResponse(json.dumps({'response': 'Only POST requests.'}),
+                            content_type="application/json")
 # END HELPER METHODS
 
 

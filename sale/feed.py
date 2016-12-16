@@ -37,7 +37,7 @@ def generate_feed(user_id):
     user_locale.reverse()
     user_locality = user_locale[1]
     # getting all the sales
-    sales = Sale.objects.all()
+    sales = Sale.objects.filter(sold=False)
     feed_products = []
     for sale in sales:
         # check if the locality match and add it to the feed_products list
