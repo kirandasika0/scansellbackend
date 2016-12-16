@@ -5,12 +5,13 @@ from .models import User
 from django.views.decorators.csrf import csrf_exempt
 import bmemcached
 from sale.utils import MemcacheWrapper
+from sale.models import Sale
 from datetime import datetime
 from utils import id_generator, create_locale, password_generator
 from django.core import serializers
 from utils import sort_usernames, contains_user
 #creating an instance of Memcache here
-mc = bmemcached.Client('pub-memcache-10484.us-east-1-1.2.ec2.garantiadata.com:10484', 
+mc = bmemcached.Client('pub-memcache-10484.us-east-1-1.2.ec2.garantiadata.com:10484',
                         'saikiran',
                         'Skd30983')
 memcache = MemcacheWrapper(mc)
@@ -36,7 +37,7 @@ def create_user(request):
             return HttpResponse(json.dumps({'response': 'there was a problem in creating the user'}),
                                 content_type="application/json")
     else:
-        return HttpResponse(json.dumps({'response': 'please send the correct request'}), 
+        return HttpResponse(json.dumps({'response': 'please send the correct request'}),
                             content_type="application/json")
 
 
@@ -52,10 +53,10 @@ def signUpUser(request):
         locale = create_locale(latitude, longitude)
         password = password_generator(request.POST.get('password', ""))
         redis_key = user_id + "_feed"
-        
+
         # check if the user is already present
         sorted_users = sort_usernames(User.objects.all())
-        
+
         if not contains_user(username, sorted_users):
              # Save the user
             user = User.objects.create(user_id=user_id, username=username,
@@ -63,14 +64,14 @@ def signUpUser(request):
                                         email=email, mobile_number=mobile_number,
                                         locale=locale, redis_key=redis_key)
             user.save()
-        
+
             return HttpResponse(serializers.serialize("json", [user])[1:-1],
                                 content_type="application/json")
         else:
             response = {'error': 'user with that username already exists. please try something else.'}
             return HttpResponse(json.dumps(response),
                                 content_type="application/json")
-        
+
     else:
         return HttpResponse(json.dumps({'response': 'view only allows POST reqeusts.'}),
                             content_type="application/json")
@@ -87,14 +88,14 @@ def login(request):
             except:
                 return HttpResponse(json.dumps({'error': 'username or password incorrect'}),
                                     content_type="application/json")
-            
+
             if password == user.password:
                 return HttpResponse(serializers.serialize("json", [user])[1:-1],
                                     content_type="application/json")
             else:
                 return HttpResponse(json.dumps({'error':'username or password incorrect'}),
                                     content_type="application/json")
-            
+
     else:
         return HttpResponse(json.dumps({'response': 'only POST requests allowed'}),
                             content_type="application/json")
@@ -114,4 +115,16 @@ def update_location(request):
             return HttpResponse(json.dumps({'response': 'done'}), content_type="appliaction/json")
     else:
         return HttpResponse(json.dumps({'response': 'please send data.'}),
+                            content_type="application/json")
+
+
+@csrf_exempt
+def mySales(request):
+    if request.method == 'POST':
+        userId = request.POST.get('user_id')
+        sales = Sale.objects.filter(seller_id=userId)
+        return HttpResponse(serializers.serialize("json", sales),
+                            content_type="application/json")
+    else:
+        return HttpResponse(json.dumps({'response': 'Only POST requests.'}),
                             content_type="application/json")
