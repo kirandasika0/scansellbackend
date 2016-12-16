@@ -14,24 +14,25 @@ class Sale(models.Model):
     price = models.CharField(max_length=200)
     location = models.CharField(default='', max_length=255)
     geo_point = models.CharField(default='', max_length=255)
+    sold = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return '{}'.format(self.seller_username)
-        
+
     def getLocation(self):
         latitude, longitude = self.geo_point.split(',')
         return Location(latitude, longitude)
-     
-     
+
+
     def compareTo(self, otherSale, refLocation):
         ''' Compare two sales based on the reference location. Typically the
-        user location 
+        user location
         Args:
         self - Model isntance of the current sale.self
         otherSale = other instance of Sale model to compare
         refLocation = refernce location for calculating distance (Object Type: Location)
-        
+
         return: 1,0,-1
         return-type: integer
         '''
@@ -39,7 +40,7 @@ class Sale(models.Model):
         otherLocation = otherSale.getLocation()
         selfDistance = haversine_km(refLocation, selfLocation)
         otherDistance = haversine_km(refLocation, otherLocation)
-        
+
         #compare values
         if selfDistance > otherDistance:
             return 1
@@ -48,7 +49,7 @@ class Sale(models.Model):
         else:
             return 0
         return 0
-      
+
     def comparePriceTo(self, otherSale):
         if int(self.price) > int(otherSale.price):
             return 1
@@ -57,7 +58,7 @@ class Sale(models.Model):
         else:
             return 0
         return 0
-        
+
     class Meta:
         ordering = ['-created_at']
 
