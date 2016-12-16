@@ -55,7 +55,7 @@ def generate_feed(user_id):
     serialized_data = []
     for sale in feed_products:
         latitude, longitude = sale.geo_point.split(',')
-        images = serializers.serialize("json", 
+        images = serializers.serialize("json",
                         SaleImage.objects.filter(sale_id=sale.id))
         product_data = {'id': sale.id, 'seller_id': sale.seller_id,
                         'seller_username': sale.seller_username,
@@ -66,11 +66,12 @@ def generate_feed(user_id):
                         'latitude': latitude,
                         'longitude': longitude,
                         'images': json.loads(images),
-                        'extra_info': determine_relation(user_locale_list, sale.location)
+                        'extra_info': determine_relation(user_locale_list, sale.location),
+                        'sold': sale.sold
                         }
         serialized_data.append(product_data)
     return serialized_data
-    
+
 # we might want to rerank all the results based on the number of matches
 def determine_relation(user_locale, sale_locale):
     user_locale = user_locale.split(',')
@@ -81,7 +82,7 @@ def determine_relation(user_locale, sale_locale):
         if loc in sale_locale:
             matches += 1
             common_grounds.append(loc)
-            
+
     common_grounds = [cg.title() for cg in common_grounds]
     if matches >=3:
         # filtering matches
@@ -93,7 +94,7 @@ def determine_relation(user_locale, sale_locale):
     else:
         relation_string = ', '.join(common_grounds)
     return relation_string
-    
+
 def sale_relationship(user_locale, sale_locale):
     # creating a common ground list
     common_grounds = []
@@ -104,7 +105,7 @@ def sale_relationship(user_locale, sale_locale):
         if loc in sale_locale:
             matches += 1
             common_grounds.append(loc)
-    
+
     # title casing the common ground list
     common_grounds = [loc.title() for loc in common_grounds]
     return_dict = {}
@@ -123,7 +124,7 @@ def get_relative_feed(user_id):
     user = User.objects.get(user_id=user_id)
     # user redis key
     user_redis_key = user.redis_key
-    
+
     hasRedisKey = (False, True)[r.exists(user_redis_key) == True]
     # now check if the redis key is available
     if hasRedisKey == True:
@@ -134,9 +135,8 @@ def get_relative_feed(user_id):
         new_user_feed = {'user_feed': generate_feed(user_id)}
         r.set(user_redis_key, new_user_feed)
         return new_user_feed['user_feed']
-        
+
 
 def create_geofence(user_id="ME6lnbVxR9"):
     ''' this function will create a geofence for a user based on his location '''
     pass
-    
