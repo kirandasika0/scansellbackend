@@ -53,23 +53,23 @@ def title_case_string(request):
 @csrf_exempt
 def new_sale(request):
     if request.method == 'POST':
-        seller_id   = request.POST.get('seller_id', "")
-        seller_username = request.POST.get('seller_username', "")
-        book_id = request.POST.get('book_id', "")
-        location = request.POST.get('location', "")
-        description = request.POST.get('description', "")
-        price = request.POST.get('price', "")
-        latitude = request.POST.get('latitude', "")
-        longitude = request.POST.get('longitude', "")
+        seller_id   = request.POST.get("seller_id")
+        seller_username = request.POST.get("seller_username")
+        book_id = request.POST.get("book_id")
+        location = request.POST.get('location')
+        description = request.POST.get('description')
+        price = request.POST.get('price')
+        latitude = request.POST.get('latitude')
+        longitude = request.POST.get('longitude')
         geo_point = latitude + "," + longitude
         if book_id:
             #book is not there please enter the details of the book
             #sending message back to client for uploading contents of book
             #getting the required data
-            full_title = request.POST.get('full_title', "")
+            full_title = request.POST.get("full_title")
             link = ""
-            uniform_title = request.POST.get('uniform_title', "")
-            ean_13 = request.POST.get('barcode_number', "")
+            uniform_title = request.POST.get('uniform_title')
+            ean_13 = request.POST.get('barcode_number')
             new_book = Book.objects.create(full_title=full_title,
                                             link=link,
                                             uniform_title=uniform_title,
