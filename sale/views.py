@@ -62,6 +62,7 @@ def new_sale(request):
         latitude = request.POST.get('latitude')
         longitude = request.POST.get('longitude')
         selected_categories = request.POST.getlist('selected_categories')
+        print selected_categories
         geo_point = latitude + "," + longitude
         if book_id:
             #book is not there please enter the details of the book
