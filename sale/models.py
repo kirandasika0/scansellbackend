@@ -15,6 +15,7 @@ class Sale(models.Model):
     location = models.CharField(default='', max_length=255)
     geo_point = models.CharField(default='', max_length=255)
     sold = models.BooleanField(default=False)
+    categories = models.CharField(default='[]', max_length=258)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

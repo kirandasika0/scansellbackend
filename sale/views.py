@@ -12,12 +12,12 @@ from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 import exceptions
 from location import Location
-from distance_module.geo_feed import geo_feed
+#from distance_module.geo_feed import geo_feed
 from datetime import datetime
 from users_b.models import User
 import bmemcached
 from utils import MemcacheWrapper
-from distance_module.geo_feed_v2 import GeoFeed
+#from distance_module.geo_feed_v2 import GeoFeed
 from utils import MinPQ
 from bid import Bid
 
@@ -61,6 +61,7 @@ def new_sale(request):
         price = request.POST.get('price')
         latitude = request.POST.get('latitude')
         longitude = request.POST.get('longitude')
+        selected_categories = request.POST.getlist('selected_categories')
         geo_point = latitude + "," + longitude
         if book_id:
             #book is not there please enter the details of the book
@@ -79,7 +80,8 @@ def new_sale(request):
             #the correct redis bucket for the user
             sale = Sale.objects.create(seller_id=seller_id, seller_username=seller_username,
                                 book=new_book, description=description, price=price,
-                                location=location, geo_point=geo_point)
+                                location=location, geo_point=geo_point,
+                                categories=json.dumps(selected_categories))
             sale.save()
             #we have to create the images
             #front cover image
@@ -108,19 +110,19 @@ def new_sale(request):
                 'extra_info': sale.location
             }
             # check for which users we have to insert it
-            user = User.objects.get(user_id=sale.seller_id)
-            user_locale = user.locale.split(',')
-            user_locale.reverse()
-            user_locality = user_locale[1]
-            other_users = User.objects.all()
-            for o_user in other_users:
-                o_user_locale = o_user.locale.split(',')
-                o_user_locale.reverse()
-                o_user_locality = o_user_locale[1]
-
-                if user_locality == o_user_locality:
-                    # the two locality are equal now we can insert in the memcache
-                    memcache.append_data_to_key(sale.seller_id, memcached_response)
+            # user = User.objects.get(user_id=sale.seller_id)
+            # user_locale = user.locale.split(',')
+            # user_locale.reverse()
+            # user_locality = user_locale[1]
+            # other_users = User.objects.all()
+            # for o_user in other_users:
+            #     o_user_locale = o_user.locale.split(',')
+            #     o_user_locale.reverse()
+            #     o_user_locality = o_user_locale[1]
+            #
+            #     if user_locality == o_user_locality:
+            #         # the two locality are equal now we can insert in the memcache
+            #         memcache.append_data_to_key(sale.seller_id, memcached_response)
             response = {'response': 'Your Sale has been created'}
             return HttpResponse(json.dumps(response),
                                 content_type="application/json")

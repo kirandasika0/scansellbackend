@@ -3,6 +3,13 @@ from datetime import datetime
 from json import dumps, loads
 from hashlib import sha224
 from .models import Sale
+from haversine_km import haversine_km
+from location import Location
+from .models import Sale
+from collections import defaultdict
+import pprint
+import pdb
+from random import randint
 # this file will never connect to the memcache server directly
 # rather it will be passed an instance of the memcache client object
 
@@ -333,3 +340,96 @@ def binary_search(a, target, comparator):
             lo = mid + 1
         else:
             return mid
+
+
+
+
+def make_graph_sales_connections(uLoc, sales):
+	# connections will be list of tuples
+	connections = []
+	#first filter - distance filter
+	nearby = []
+	for sale in sales:
+		sLat, sLong = sale.geo_point.split(',')
+		sLoc = Location(sLat, sLong)
+		distance = haversine_km(uLoc, sLoc)
+		if distance <= 500000:
+			nearby.append(sale)
+
+	for sale in nearby:
+		#sCategories - a list of categories
+		sCategories = loads(sale.categories)
+		temp = list(nearby)
+		temp.remove(sale)
+		sConnections = get_connection(sCategories, temp, connections=[])
+		if sConnections is not None:
+			for connection in sConnections:
+				if sale is not connection:
+					connections.append((sale, connection))
+	return connections
+
+
+
+def get_connection(sCategories, sales, connections=[]):
+	if sCategories is None or len(sCategories) is 0:
+		return connections
+	category = sCategories[len(sCategories) - 1]
+	for sale in sales:
+		sCategories2 = loads(sale.categories)
+		if category in sCategories2:
+			connections.append(sale)
+	sCategories.pop()
+	return get_connection(sCategories, sales, connections=connections)
+
+def test_connections():
+	sales = Sale.objects.all()
+	uLat, uLong = sales[0].geo_point.split(',')
+	uLoc = Location(uLat, uLong)
+	connections = make_graph_sales_connections(uLoc, sales)
+	g = Graph(connections)
+	randomSale = sales[2]
+	print randomSale.book.uniform_title + "\n\n"
+	path = g.ranked_path(randomSale, 0, path=[])
+	if randomSale in path:
+		path.remove(randomSale)
+	for sale in path:
+		print sale.book.uniform_title
+
+
+
+class Graph():
+	def __init__(self, connections, directed=False):
+		self._graph = defaultdict(set)
+		self._directed = directed
+		self.add_connections(connections)
+
+	def add_connections(self, connections):
+		for node1, node2 in connections:
+			self.add(node1, node2)
+
+
+	def add(self, node1, node2):
+		edge_weight = self.calculate_edge_weight(node1, node2)
+		self._graph[node1].add((edge_weight,node2))
+		if not self._directed:
+			self._graph[node2].add((edge_weight,node1))
+
+	def calculate_edge_weight(self, node1, node2):
+		lat1, long1 = node1.geo_point.split(',')
+		lat2, long2 = node2.geo_point.split(',')
+		l1 = Location(lat1, long1)
+		l2 = Location(lat2, long2)
+		return haversine_km(l1, l2) * randint(0,200)
+
+	def find_path(self, node1, node2, path=[]):
+		path = path + [node1]
+		if node1 == node2:
+			return path
+		if node1 not in self._graph:
+			return None
+		for edge_weight, node in self._graph[node1]:
+			if node not in path:
+				new_path = self.find_path(node, node2, path)
+				if new_path:
+					return new_path
+		return None
