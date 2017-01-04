@@ -12,6 +12,9 @@ def create_locale(latitude, longitude):
     locale = []
     #sending request to google to create locale
     url = "http://maps.googleapis.com/maps/api/geocode/json?latlng=" + latitude + "," + longitude
+    print "\n\n"
+    print url
+    print "\n\n"
     try:
         response = json.loads(requests.get(url).content)
         print "\n\n"
