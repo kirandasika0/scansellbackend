@@ -6,7 +6,7 @@ from django.core.signing import Signer
 
 def id_generator(size=9, chars=string.ascii_uppercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
-    
+
 
 def create_locale(latitude, longitude):
     locale = []
@@ -14,6 +14,9 @@ def create_locale(latitude, longitude):
     url = "http://maps.googleapis.com/maps/api/geocode/json?latlng=" + latitude + "," + longitude
     try:
         response = json.loads(requests.get(url).content)
+        print "\n\n"
+        print response
+        print "\n\n"
     except:
         return_response = "nil"
     #getting the info that we need.
@@ -28,16 +31,16 @@ def create_locale(latitude, longitude):
             locale.append(obj["long_name"])
         if "administrative_area_level_1" in obj["types"]:
             locale.append(obj["short_name"])
-            
+
     return ','.join(locale).upper()
-    
+
 def password_generator(password):
     s = Signer()
     hashPassword = s.sign(password)
     hashPassword = hashPassword.split(':')
     return hashPassword[1]
-    
-    
+
+
 
 
 
@@ -51,7 +54,7 @@ def sort_usernames(users):
     ''' Sorts all the usernames in ascending order.
     Keyword-args:
     users - a list of all user objects to sort
-    
+
     return: list (a list containing the sorted usernames)
     '''
     result = []
@@ -63,7 +66,7 @@ def sort_usernames(users):
     z = sort_usernames(users[mid:])
     i = 0
     j = 0
-    
+
     while i < len(y) and j < len(z):
         if y[i].compareTo(z[j]):
             result.append(z[j])
@@ -74,12 +77,12 @@ def sort_usernames(users):
     result += y[j:]
     result += z[j:]
     return result
-    
+
 
 def contains_user(username, users):
     lo = 0
     hi = len(users) - 1
-    
+
     mid = lo + (hi - lo) / 2
     while (lo <= hi):
         if username < users[mid].username:
@@ -88,6 +91,5 @@ def contains_user(username, users):
             lo = mid + 1
         else:
             return True
-    
+
     return False
-        
