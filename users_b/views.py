@@ -10,6 +10,8 @@ from datetime import datetime
 from utils import id_generator, create_locale, password_generator
 from django.core import serializers
 from utils import sort_usernames, contains_user
+import pdb
+from django.http import QueryDict
 #creating an instance of Memcache here
 mc = bmemcached.Client('pub-memcache-10484.us-east-1-1.2.ec2.garantiadata.com:10484',
                         'saikiran',
@@ -44,28 +46,23 @@ def create_user(request):
 @csrf_exempt
 def signUpUser(request):
     if request.method == 'POST':
+        request.POST = QueryDict(request.body)
+        pdb.set_trace()
+        data = json.loads(request.body)
         user_id = id_generator()
-        username = request.POST.get('username', "")
-        email = request.POST.get('email', "")
+        username = data['username']
+        email = data['email']
         mobile_number = request.POST.get('mobile_number', "")
-        latitude = request.POST.get('latitude')
-        print "\n\n"
-        print latitude
-        longitude = request.POST.get('longitude')
-        print longitude
-        print "\n\n"
+        mobile_number = data['mobile_number']
+        latitude = data['latitude']
+        longitude = data['longitude']
         locale = create_locale(latitude, longitude)
-        password = password_generator(request.POST.get('password', ""))
+        password = password_generator(data['password'])
         redis_key = user_id + "_feed"
-
-        print "\n\n"
-        print (username, password)
-        print "\n\n"
-
         # check if the user is already present
-        sorted_users = sort_usernames(User.objects.all())
+        #sorted_users = sort_usernames(User.objects.all())
 
-        if not contains_user(username, sorted_users):
+        if not User.objects.get(username=username):
              # Save the user
             user = User.objects.create(user_id=user_id, username=username,
                                         password=password,

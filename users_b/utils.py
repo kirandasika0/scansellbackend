@@ -11,15 +11,9 @@ def id_generator(size=9, chars=string.ascii_uppercase + string.digits):
 def create_locale(latitude, longitude):
     locale = []
     #sending request to google to create locale
-    url = "http://maps.googleapis.com/maps/api/geocode/json?latlng=" + latitude + "," + longitude
-    print "\n\n"
-    print url
-    print "\n\n"
+    url = "http://maps.googleapis.com/maps/api/geocode/json?latlng=" + str(latitude) + "," + str(longitude)
     try:
         response = json.loads(requests.get(url).content)
-        print "\n\n"
-        print response
-        print "\n\n"
     except:
         return_response = "nil"
     #getting the info that we need.
