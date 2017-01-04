@@ -48,8 +48,12 @@ def signUpUser(request):
         username = request.POST.get('username', "")
         email = request.POST.get('email', "")
         mobile_number = request.POST.get('mobile_number', "")
-        latitude = request.POST.get('latitude', "")
-        longitude = request.POST.get('longitude', "")
+        latitude = request.POST.get('latitude')
+        print "\n\n"
+        print latitude
+        longitude = request.POST.get('longitude')
+        print longitude
+        print "\n\n"
         locale = create_locale(latitude, longitude)
         password = password_generator(request.POST.get('password', ""))
         redis_key = user_id + "_feed"
