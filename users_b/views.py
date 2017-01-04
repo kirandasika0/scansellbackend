@@ -54,6 +54,10 @@ def signUpUser(request):
         password = password_generator(request.POST.get('password', ""))
         redis_key = user_id + "_feed"
 
+        print "\n\n"
+        print (username, password)
+        print "\n\n"
+
         # check if the user is already present
         sorted_users = sort_usernames(User.objects.all())
 
