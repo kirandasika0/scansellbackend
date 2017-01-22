@@ -389,11 +389,6 @@ def test_connections():
 	g = Graph(connections)
 	randomSale = sales[2]
 	print randomSale.book.uniform_title + "\n\n"
-	path = g.ranked_path(randomSale, 0, path=[])
-	if randomSale in path:
-		path.remove(randomSale)
-	for sale in path:
-		print sale.book.uniform_title
 
 
 
