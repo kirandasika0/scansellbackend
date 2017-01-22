@@ -10,11 +10,16 @@ from collections import defaultdict
 import pprint
 import pdb
 from random import randint
+from firebase import firebase
+
 # this file will never connect to the memcache server directly
 # rather it will be passed an instance of the memcache client object
 
 # CLASS CONSTANTS
 DATETIME_FORMAT = '%Y-%m-%d %H:%M:%S'
+FIREBASE_BUCKET = "https://switch-1376.firebaseio.com"
+FB = firebase.FirebaseApplication(FIREBASE_BUCKET)
+
 
 class MemcacheWrapper():
 	def __init__(self, mc):
@@ -428,3 +433,23 @@ class Graph():
 				if new_path:
 					return new_path
 		return None
+
+
+
+class FirebaseRequest():
+    def __init__(self, endpoint, payload=None):
+        self.payload = payload
+        self.endpoint = endpoint
+        
+        
+    def post(self):
+        if self.payload is None:
+            return False
+        # now post the payload to firebase
+        
+        return FB.post(self.endpoint, self.payload)
+        
+    def delete(self):
+        return FB.delete(self.endpoint)
+    
+        

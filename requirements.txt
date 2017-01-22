@@ -5,6 +5,7 @@ argparse==1.2.1
 beautifulsoup4==4.4.0
 gunicorn==19.3.0
 python-binary-memcached==0.24.6
+python-firebase==1.2
 python-memcached==1.57
 redis==2.10.5
 requests==2.7.0

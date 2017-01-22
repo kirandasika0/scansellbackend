@@ -1,4 +1,7 @@
 from utils import MaxPQ, MemcacheWrapper
+from datetime import datetime
+from utils import FirebaseRequest
+DATETIME_FORMAT = '%Y-%m-%d %H:%M:%S'
 class Bid():
     def __init__(self, saleIn=None):
         if saleIn is not None:
@@ -14,7 +17,12 @@ class Bid():
         """
         This method takes a user and bidPrice and checks if its the highest bid.
         Then adds it to the bid data and serializes and sends a notification to
-        the required user
+        the required user.
+        
+        +++ New feature +++
+        place_bid will now also push information to firebase in order to get
+        real time information in the app.
+
 
         Arguments:
         user: a instance of the User model
@@ -36,6 +44,17 @@ class Bid():
             # new price is the highest price
             self.bidData['highest_bidder'] = bidUsr.serialize()
         self.bidderPQ.enqueue(bidUsr)
+        
+        #payload for firebase request
+        firebase_payload = {
+            'id' : self.cacheKey,
+            'highest_bidder': self.bidData['highest_bidder'].serialize(),
+            'timestamp': datetime.now().strftime(DATETIME_FORMAT)
+        }
+        endpoint = "/bid/" + self.cacheKey
+        #creating a firebase request
+        firebase_request = FirebaseRequest(endpoint, payload=firebase_payload)
+        firebase_request.post()
         return True
 
     def stats(self):
