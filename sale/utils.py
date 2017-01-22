@@ -449,7 +449,7 @@ class FirebaseRequest():
         print FB.post(self.endpoint, self.payload)
         return True
         
-    def delete(self):
-        return FB.delete(self.endpoint)
+    def delete(self, uid=None):
+        return FB.delete(self.endpoint, uid)
     
         
