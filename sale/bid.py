@@ -54,6 +54,7 @@ class Bid():
         endpoint = "/bid/" + self.cacheKey
         #creating a firebase request
         firebase_request = FirebaseRequest(endpoint, payload=firebase_payload)
+        firebase_request.delete()
         firebase_request.post()
         return True
 
