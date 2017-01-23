@@ -48,7 +48,7 @@ class Bid():
         #payload for firebase request
         firebase_payload = {
             'id' : self.cacheKey,
-            'highest_bidder': self.bidData['highest_bidder'],
+            'highest_bidder': bidUsr.serialize(),
             'timestamp': datetime.now().strftime(DATETIME_FORMAT)
         }
         endpoint = "/bid/" + self.cacheKey
