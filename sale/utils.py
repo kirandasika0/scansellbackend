@@ -442,12 +442,16 @@ class FirebaseRequest():
         self.endpoint = endpoint
         
         
-    def post(self):
+    def post(self, uid=None):
         if self.payload is None:
             return False
-        # now post the payload to firebase
-        print FB.post(self.endpoint, self.payload)
-        return True
+        
+        if FB.get(self.endpoint, uid) is None:
+            return FB.post(self.endpoint, self.payload)
+        else:
+            self.delete(self.endpoint)
+            return FB.post(self.endpoint, self.payload)
+        return False
         
     def delete(self, uid=None):
         return FB.delete(self.endpoint, uid)
