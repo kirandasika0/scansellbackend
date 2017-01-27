@@ -1,7 +1,7 @@
 from utils import MaxPQ, MemcacheWrapper
 from datetime import datetime
 from utils import FirebaseRequest
-DATETIME_FORMAT = '%Y-%m-%d %H:%M:%S'
+DATETIME_FORMAT = '%m/%d/%Y %H:%M:%S'
 class Bid():
     def __init__(self, saleIn=None):
         if saleIn is not None:
