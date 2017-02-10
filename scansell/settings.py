@@ -84,7 +84,10 @@ DATABASES = {
         'NAME': 'scanselldb',
         'USER': 'scanselldb',
         'PASSWORD': 'Kiran@cr7',
-        'HOST': 'scanselldb.db.11448881.hostedresource.com'
+        'HOST': 'scanselldb.db.11448881.hostedresource.com',
+        'TEST':{
+            'NAME': 'testscanselldb'
+        }
     }
 }
 
