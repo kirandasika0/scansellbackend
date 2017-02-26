@@ -27,7 +27,7 @@ r = redis.Redis(host='pub-redis-18592.us-east-1-2.4.ec2.garantiadata.com',
                 password='kiran@cr7')
 mc = bmemcached.Client('pub-memcache-17929.us-east-1-2.1.ec2.garantiadata.com:17929',
                         'kiran',
-                        'Skd3098309^')
+                        'kiran@cr7')
 memcache = MemcacheWrapper(mc)
 
 # Create your views here.
