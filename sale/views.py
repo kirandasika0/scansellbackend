@@ -20,6 +20,8 @@ from utils import MemcacheWrapper
 #from distance_module.geo_feed_v2 import GeoFeed
 from utils import MinPQ
 from bid import Bid
+from django.http import QueryDict
+import pdb
 
 # creating a new redis server
 r = redis.Redis(host='pub-redis-18592.us-east-1-2.4.ec2.garantiadata.com',
@@ -53,25 +55,25 @@ def title_case_string(request):
 @csrf_exempt
 def new_sale(request):
     if request.method == 'POST':
-        seller_id   = request.POST.get("seller_id")
-        seller_username = request.POST.get("seller_username")
-        book_id = request.POST.get("book_id")
-        location = request.POST.get('location')
-        description = request.POST.get('description')
-        price = request.POST.get('price')
-        latitude = request.POST.get('latitude')
-        longitude = request.POST.get('longitude')
-        selected_categories = request.POST.getlist('selected_categories')
-        print selected_categories
-        geo_point = latitude + "," + longitude
-        if book_id:
+        data = json.loads(request.body)
+        seller_id   = data["seller_id"]
+        seller_username = data["seller_username"]
+        book_id = data["book_id"]
+        location = data["location"]
+        description = data["description"]
+        price = data["price"]
+        latitude = data["latitude"]
+        longitude = data["longitude"]
+        selected_categories = data["selected_categories"]
+        geo_point = str(latitude) + "," + str(longitude)
+        if book_id or book_id is 0:
             #book is not there please enter the details of the book
             #sending message back to client for uploading contents of book
             #getting the required data
-            full_title = request.POST.get("full_title")
+            full_title = data["full_title"]
             link = ""
-            uniform_title = request.POST.get('uniform_title')
-            ean_13 = request.POST.get('barcode_number')
+            uniform_title = data["uniform_title"]
+            ean_13 = data["barcode_number"]
             new_book = Book.objects.create(full_title=full_title,
                                             link=link,
                                             uniform_title=uniform_title,
@@ -458,3 +460,9 @@ def bidStats(request):
     else:
         return HttpResponse(json.dumps({'response': 'send POST request.'}),
                             content_type="application/json")
+
+@csrf_exempt
+def allSales(request):
+    sales = Sale.objects.all()
+    return HttpResponse(serializers.serialize("json", sales),
+                        content_type="application/json")
