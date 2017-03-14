@@ -45,17 +45,14 @@ def create_user(request):
 @csrf_exempt
 def signUpUser(request):
     if request.method == 'POST':
-        request.POST = QueryDict(request.body)
-        data = json.loads(request.body)
         user_id = id_generator()
-        username = data['username']
-        email = data['email']
+        username = request.POST.get('username')
+        email = request.POST.get('email')
         mobile_number = request.POST.get('mobile_number', "")
-        mobile_number = data['mobile_number']
-        latitude = data['latitude']
-        longitude = data['longitude']
+        latitude = request.POST.get('latitude')
+        longitude = request.POST.get('longitude')
         locale = create_locale(latitude, longitude)
-        password = password_generator(data['password'])
+        password = password_generator(request.POST.get('password'))
         redis_key = user_id + "_feed"
         # check if the user is already present
         #sorted_users = sort_usernames(User.objects.all())
