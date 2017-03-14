@@ -5,4 +5,5 @@ urlpatterns = [
     url(r'^update_location/', views.update_location),
     url(r'login/', views.login),
     url(r'my_sales/', views.mySales),
+    url(r'all_users/', views.allUsers),
 ]

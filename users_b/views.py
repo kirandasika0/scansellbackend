@@ -10,7 +10,6 @@ from datetime import datetime
 from utils import id_generator, create_locale, password_generator
 from django.core import serializers
 from utils import sort_usernames, contains_user
-import pdb
 from django.http import QueryDict
 #creating an instance of Memcache here
 mc = bmemcached.Client('pub-memcache-10484.us-east-1-1.2.ec2.garantiadata.com:10484',
@@ -47,7 +46,6 @@ def create_user(request):
 def signUpUser(request):
     if request.method == 'POST':
         request.POST = QueryDict(request.body)
-        pdb.set_trace()
         data = json.loads(request.body)
         user_id = id_generator()
         username = data['username']
@@ -62,7 +60,7 @@ def signUpUser(request):
         # check if the user is already present
         #sorted_users = sort_usernames(User.objects.all())
 
-        if not User.objects.get(username=username):
+        if len(User.objects.filter(username=username)) is 0:
              # Save the user
             user = User.objects.create(user_id=user_id, username=username,
                                         password=password,
@@ -133,3 +131,10 @@ def mySales(request):
     else:
         return HttpResponse(json.dumps({'response': 'Only POST requests.'}),
                             content_type="application/json")
+
+
+@csrf_exempt
+def allUsers(request):
+    users = User.objects.all()
+    return HttpResponse(serializers.serialize("json", users),
+                        content_type="application/json")
