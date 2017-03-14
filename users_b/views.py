@@ -67,7 +67,7 @@ def signUpUser(request):
                                         email=email, mobile_number=mobile_number,
                                         locale=locale, redis_key=redis_key)
             user.save()
-
+            print "\n\nUser signed up success. \n\n"
             return HttpResponse(serializers.serialize("json", [user])[1:-1],
                                 content_type="application/json")
         else:
