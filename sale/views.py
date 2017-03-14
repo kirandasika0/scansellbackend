@@ -88,9 +88,9 @@ def new_sale(request):
             sale.save()
             #we have to create the images
             #front cover image
-            front_cover_image = request.POST.get('front_cover_image', "")
-            first_cover_image = request.POST.get('first_cover_image', "")
-            back_cover_image = request.POST.get('back_cover_image', "")
+            front_cover_image = data["front_cover_image"]
+            first_cover_image = data["first_cover_image"]
+            back_cover_image = data["back_cover_image"]
             #saving all the sale images
             img_names = [front_cover_image, first_cover_image, back_cover_image]
             #img types
