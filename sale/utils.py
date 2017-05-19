@@ -11,6 +11,7 @@ import pprint
 import pdb
 from random import randint
 from firebase import firebase
+import time
 
 # this file will never connect to the memcache server directly
 # rather it will be passed an instance of the memcache client object
@@ -358,7 +359,7 @@ def make_graph_sales_connections(uLoc, sales):
 		sLat, sLong = sale.geo_point.split(',')
 		sLoc = Location(sLat, sLong)
 		distance = haversine_km(uLoc, sLoc)
-		if distance <= 500000:
+		if distance <= 10000000:
 			nearby.append(sale)
 
 	for sale in nearby:
@@ -391,9 +392,18 @@ def test_connections():
 	uLat, uLong = sales[0].geo_point.split(',')
 	uLoc = Location(uLat, uLong)
 	connections = make_graph_sales_connections(uLoc, sales)
+	# for a,b in connections:
+	# 	print (a.book.uniform_title , b.book.uniform_title)
 	g = Graph(connections)
-	randomSale = sales[2]
-	print randomSale.book.uniform_title + "\n\n"
+	randomSale1 = sales[randint(0, len(sales) - 1)]
+	randomSale2 = sales[randint(0, len(sales) - 1)]
+	print randomSale1.seller_username + " " + randomSale1.book.uniform_title
+	print randomSale2.seller_username + " " + randomSale2.book.uniform_title
+	path = g.find_path(randomSale1, randomSale2)
+	if path == None:
+		return
+	for a in path:
+		print (a.seller_username, a.book.full_title)
 
 
 
@@ -419,7 +429,9 @@ class Graph():
 		lat2, long2 = node2.geo_point.split(',')
 		l1 = Location(lat1, long1)
 		l2 = Location(lat2, long2)
-		return haversine_km(l1, l2) * randint(0,200)
+		t1 = time.mktime(node1.created_at.timetuple())
+		t2 = time.mktime(node2.created_at.timetuple())
+		return haversine_km(l1, l2) * randint(0,200) * (1/t1) * (1/t2)
 
 	def find_path(self, node1, node2, path=[]):
 		path = path + [node1]
@@ -440,20 +452,18 @@ class FirebaseRequest():
     def __init__(self, endpoint, payload=None):
         self.payload = payload
         self.endpoint = endpoint
-        
-        
+
+
     def post(self, uid=None):
         if self.payload is None:
             return False
-        
+
         if FB.get(self.endpoint, uid) is None:
             return FB.post(self.endpoint, self.payload)
         else:
             self.delete(self.endpoint)
             return FB.post(self.endpoint, self.payload)
         return False
-        
+
     def delete(self, uid=None):
         return FB.delete(self.endpoint, uid)
-    
-        
