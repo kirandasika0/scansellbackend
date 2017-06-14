@@ -466,3 +466,17 @@ def allSales(request):
     sales = Sale.objects.all()
     return HttpResponse(serializers.serialize("json", sales),
                         content_type="application/json")
+
+@csrf_exempt
+def getAlikeProduct(request):
+    if request.method == 'POST':
+        user_id = request.POST.get('user_id')
+        current_sale_id = request.POST.get('current_sale')
+        userLocation = Location(request.POST.get('latitude'),
+                                request.POST.get('longitude'))
+        current_sale = Sale.objects.get(pk=current_sale_id)
+        return HttpResponse(json.dumps({'response': true}),
+                            content_type="application/json")
+    else:
+        return HttpResponse(json.dumps({'response':'Please send a POST request'}),
+                            content_type="application/json")
