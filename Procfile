@@ -1,1 +1,1 @@
-web: gunicorn scansell.wsgi --log-file -
+web: gunicorn --pythonpath scansell scansell.wsgi --log-file -
