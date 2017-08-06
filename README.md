@@ -1,8 +1,3 @@
-<h1> Scan & sell backend</h1>
+All backend deployment code.
 
-This is the backend of the app.
-
-All the code is written in python
-
-parts of it is also written in c for speed enhancement.
-
+contact [Sai Kiran](kirandasika30@gmail.com) for more information
