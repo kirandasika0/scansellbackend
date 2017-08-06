@@ -89,15 +89,9 @@ WSGI_APPLICATION = 'scansell.wsgi.application'
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'scanselldb',
-        'USER': 'scanselldb',
-        'PASSWORD': 'Kiran@cr7',
-        'HOST': 'scanselldb.db.11448881.hostedresource.com',
-        'TEST':{
-            'NAME': 'testscanselldb'
-        }
+   'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(PROJECT_DIR, 'scansell.db'),
     }
 }
 
