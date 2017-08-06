@@ -227,7 +227,7 @@ def get_feed(request):
             # except (exceptions.UserForIDNotFoundException) as e:
             #     data.append({'error': str(e)})
             response = {'response': data,
-                        'current_app_version': '1.0',
+                        'current_app_version': '1.0.1',
                         'user_notifications_number': user_notifications}
             return HttpResponse(json.dumps(response, indent=4), content_type="application/json")
         else:
