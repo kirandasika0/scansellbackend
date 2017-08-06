@@ -1,1 +1,1 @@
-web: gunicorn --pythonpath scansell scansell.deploy --log-file -
+web: gunicorn --pythonpath scansell scansell.settings --log-file -
