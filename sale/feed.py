@@ -4,7 +4,7 @@ from users_b.models import User
 from django.core import serializers
 from search.models import Book
 import json
-from exceptions import UserForIDNotFoundException
+from sale.exceptions import UserForIDNotFoundException
 # Creating new redis server
 r = redis.Redis(host='pub-redis-18592.us-east-1-2.4.ec2.garantiadata.com',
                 port=18592,
@@ -128,7 +128,7 @@ def get_relative_feed(user_id):
     hasRedisKey = (False, True)[r.exists(user_redis_key) == True]
     # now check if the redis key is available
     if hasRedisKey == True:
-        print r.get(user_redis_key)
+        print(r.get(user_redis_key))
         return json.loads(r.get(user_redis_key))['user_feed']
     else:
         # now saving the feed in the redis box

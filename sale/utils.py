@@ -1,17 +1,17 @@
+import pprint
+import pdb
+import time
 import bmemcached
 from datetime import datetime
 from json import dumps, loads
 from hashlib import sha224
 from .models import Sale
-from haversine_km import haversine_km
-from location import Location
+from .haversine_km import haversine_km
+from .location import Location
 from .models import Sale
 from collections import defaultdict
-import pprint
-import pdb
 from random import randint
 from firebase import firebase
-import time
 
 # this file will never connect to the memcache server directly
 # rather it will be passed an instance of the memcache client object
@@ -397,8 +397,8 @@ def test_connections():
 	g = Graph(connections)
 	randomSale1 = sales[randint(0, len(sales) - 1)]
 	randomSale2 = sales[randint(0, len(sales) - 1)]
-	print randomSale1.seller_username + " " + randomSale1.book.uniform_title
-	print randomSale2.seller_username + " " + randomSale2.book.uniform_title
+	print(randomSale1.seller_username + " " + randomSale1.book.uniform_title)
+	print(randomSale2.seller_username + " " + randomSale2.book.uniform_title)
 	path = g.find_path(randomSale1, randomSale2)
 	if path == None:
 		return

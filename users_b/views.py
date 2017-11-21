@@ -1,15 +1,14 @@
+import json
+import bmemcached
 from django.shortcuts import render
 from django.http import HttpResponse
-import json
 from .models import User
 from django.views.decorators.csrf import csrf_exempt
-import bmemcached
 from sale.utils import MemcacheWrapper
 from sale.models import Sale
 from datetime import datetime
-from utils import id_generator, create_locale, password_generator
+from .utils import id_generator, create_locale, password_generator, sort_usernames, contains_user
 from django.core import serializers
-from utils import sort_usernames, contains_user
 from django.http import QueryDict
 #creating an instance of Memcache here
 mc = bmemcached.Client('pub-memcache-10484.us-east-1-1.2.ec2.garantiadata.com:10484',
@@ -64,7 +63,7 @@ def signUpUser(request):
                                         email=email, mobile_number=mobile_number,
                                         locale=locale, redis_key=redis_key)
             user.save()
-            print "\n\nUser signed up success. \n\n"
+            print("\n\nUser signed up success. \n\n")
             return HttpResponse(serializers.serialize("json", [user])[1:-1],
                                 content_type="application/json")
         else:

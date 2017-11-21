@@ -6,7 +6,7 @@ from .models import Book, StaredBook
 from users_b.models import User
 from django.core import serializers
 from sale.models import SaleImage
-from search_book import cacheBook
+from search.search_book import cacheBook
 
 def home(request):
     return HttpResponse("Welcome", content_type="application/json")
@@ -24,7 +24,7 @@ def insert_book(request):
                 Book.objects.create(full_title=full_title, link=link, uniform_title=uniform_title)
                 return HttpResponse(json.dumps({'response': 'inserted'}), content_type="application/json")
             except:
-                print "shit"
+                print("shit")
                 return HttpResponse(json.dumps({'response': 'looks like there was a problem entering it'}), 
                                     content_type="application/json")
         else:
