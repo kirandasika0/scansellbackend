@@ -15,9 +15,14 @@ def create_locale(latitude, longitude):
     try:
         response = json.loads(requests.get(url).content)
     except:
-        return_response = "nil"
+        raise ValueError("no data provided from google.")
     #getting the info that we need.
-    for obj in response["results"][0]["address_components"]:
+    try:
+        goog_response = response["results"][0]["address_components"]
+    except IndexError:
+        raise ValueError("response could not be serialized")
+    
+    for obj in goog_response:
         if "route" in obj["types"]:
             locale.append(obj["long_name"])
         if "administrative_area_level_3" in obj["types"]:
@@ -28,7 +33,6 @@ def create_locale(latitude, longitude):
             locale.append(obj["long_name"])
         if "administrative_area_level_1" in obj["types"]:
             locale.append(obj["short_name"])
-
     return ','.join(locale).upper()
 
 def password_generator(password):

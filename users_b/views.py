@@ -10,94 +10,16 @@ from datetime import datetime
 from .utils import id_generator, create_locale, password_generator, sort_usernames, contains_user
 from django.core import serializers
 from django.http import QueryDict
+from django.views.generic import View
+from django.core.exceptions import ObjectDoesNotExist
+from scansell.utils import ServeResponse
+from .forms import UserSignupForm
 #creating an instance of Memcache here
 mc = bmemcached.Client('pub-memcache-10484.us-east-1-1.2.ec2.garantiadata.com:10484',
                         'saikiran',
                         'Skd30983')
 memcache = MemcacheWrapper(mc)
 # Create your views here.
-@csrf_exempt
-def create_user(request):
-    if request.method == 'POST':
-        user_id = request.POST.get('user_id', "")
-        username = request.POST.get('username', "")
-        email = request.POST.get('email', "")
-        mobile_number = request.POST.get('mobile_number', "")
-        locale = request.POST.get('locale', "")
-        redis_key = request.POST.get('redis_key', "")
-        if user_id and username and email and mobile_number and locale and redis_key:
-            #make the user
-            user = User.objects.create(user_id=user_id, username=username,
-                                        email=email, mobile_number=mobile_number,
-                                        locale=locale, redis_key=redis_key)
-            user.save()
-            return HttpResponse(json.dumps({'response': 'true'}),
-                                content_type="application/json")
-        else:
-            return HttpResponse(json.dumps({'response': 'there was a problem in creating the user'}),
-                                content_type="application/json")
-    else:
-        return HttpResponse(json.dumps({'response': 'please send the correct request'}),
-                            content_type="application/json")
-
-
-@csrf_exempt
-def signUpUser(request):
-    if request.method == 'POST':
-        user_id = id_generator()
-        username = request.POST.get('username')
-        email = request.POST.get('email')
-        mobile_number = request.POST.get('mobile_number', "")
-        latitude = request.POST.get('latitude')
-        longitude = request.POST.get('longitude')
-        locale = create_locale(latitude, longitude)
-        password = password_generator(request.POST.get('password'))
-        redis_key = user_id + "_feed"
-        # check if the user is already present
-        #sorted_users = sort_usernames(User.objects.all())
-
-        if len(User.objects.filter(username=username)) is 0:
-             # Save the user
-            user = User.objects.create(user_id=user_id, username=username,
-                                        password=password,
-                                        email=email, mobile_number=mobile_number,
-                                        locale=locale, redis_key=redis_key)
-            user.save()
-            print("\n\nUser signed up success. \n\n")
-            return HttpResponse(serializers.serialize("json", [user])[1:-1],
-                                content_type="application/json")
-        else:
-            response = {'error': 'user with that username already exists. please try something else.'}
-            return HttpResponse(json.dumps(response),
-                                content_type="application/json")
-
-    else:
-        return HttpResponse(json.dumps({'response': 'view only allows POST reqeusts.'}),
-                            content_type="application/json")
-
-@csrf_exempt
-def login(request):
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = password_generator(request.POST.get('password'))
-        if username and password:
-            #fetching the user object form database
-            try:
-                user = User.objects.get(username=username)
-            except:
-                return HttpResponse(json.dumps({'error': 'username or password incorrect'}),
-                                    content_type="application/json")
-
-            if password == user.password:
-                return HttpResponse(serializers.serialize("json", [user])[1:-1],
-                                    content_type="application/json")
-            else:
-                return HttpResponse(json.dumps({'error':'username or password incorrect'}),
-                                    content_type="application/json")
-
-    else:
-        return HttpResponse(json.dumps({'response': 'only POST requests allowed'}),
-                            content_type="application/json")
 @csrf_exempt
 def update_location(request):
     if request.method == 'POST':
@@ -116,7 +38,6 @@ def update_location(request):
         return HttpResponse(json.dumps({'response': 'please send data.'}),
                             content_type="application/json")
 
-
 @csrf_exempt
 def mySales(request):
     if request.method == 'POST':
@@ -128,9 +49,89 @@ def mySales(request):
         return HttpResponse(json.dumps({'response': 'Only POST requests.'}),
                             content_type="application/json")
 
-
 @csrf_exempt
 def allUsers(request):
     users = User.objects.all()
     return HttpResponse(serializers.serialize("json", users),
                         content_type="application/json")
+
+
+
+######################## CLASS BASED VIEWS START HERE ######################
+
+class SignupView(View):
+    """ Main SignupView for user signups and validations. """
+    
+    def get(self, request):
+        return ServeResponse.serve_error("GET request forbidden.", 403)
+    
+    def post(self, request):
+        user_id = id_generator()
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        mobile_number = request.POST.get('mobile_number', "")
+        latitude = request.POST.get('latitude')
+        longitude = request.POST.get('longitude')
+        try:
+            locale = create_locale(latitude, longitude)
+        except ValueError:
+            locale = ""
+        password = password_generator(request.POST.get('password'))
+        redis_key = user_id + "_feed"
+        
+        if len(User.objects.filter(username=username)) == 0:
+            user = User.objects.create(user_id=user_id, username=username,
+                                        password=password,
+                                        email=email, mobile_number=mobile_number,
+                                        locale=locale, redis_key=redis_key)
+            if user is not None:
+                return ServeResponse.serve_response(serializers.serialize("json", [user])[1:-1], 201)
+            else:
+                return ServeResponse.serve_error("error while create user.", 403)
+        else:
+            return ServeResponse.serve_error("user already exists", 403)
+
+        return ServeResponse.serve_response({'response': True}, 200)
+
+class LoginView(View):
+    """ Main login view for all users. """
+
+    def get(self, reqeust):
+        return ServeResponse.serve_error("GET request not allowed.", 403)
+
+    def post(self, request):
+        username = request.POST.get('username')
+        password = password_generator(request.POST.get('password'))
+
+        if len(username) < 1 or len(password) < 1:
+            return ServeResponse.serve_error("username or password not provided", 403)
+
+        try:
+            user = User.objects.get(username=username)
+        except ObjectDoesNotExist:
+            return ServeResponse.serve_error("incorrect username or password", 403)
+        if user.password == password:
+            return ServeResponse.serve_response(serializers.serialize("json", [user])[1:-1], 200)
+
+        return ServeResponse.serve_error("incorrect username or password", 403)
+
+
+class UpdateLocationView(View):
+    """ Updates user location each time he opens the app. """
+
+    def get(self, request):
+        return ServeResponse.serve_error("GET not allowed", 403)
+    
+    def post(self, request):
+        user_id = request.POST.get('user_id')
+        memcache_key = request.POST.get('memcache_key')
+        latitude = request.POST.get('latitude')
+        longitude = request.POST.get('longitude')
+        created_at = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+        if memcache.get_val(memcache_key):
+            memcache.append_data_to_key(memcache_key, (latitude, longitude, created_at))
+            return ServeResponse.serve_response({"response": True}, 200)
+        
+        memcache.set_key_value(memcache_key, (latitude, longitude, created_at))
+        return ServeResponse.serve_response({"response": True}, 200)
