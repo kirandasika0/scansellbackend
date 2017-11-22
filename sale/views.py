@@ -5,21 +5,18 @@ from .models import Sale, SaleInterest, SaleImage, SaleNotification
 from search.models import Book
 import json, requests
 import redis
-from feed import generate_feed, get_relative_feed
+from .feed import generate_feed, get_relative_feed
 from django.core import serializers
-from notifications import Notification
+from sale.notifications import Notification
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
-import exceptions
-from location import Location
-#from distance_module.geo_feed import geo_feed
+import sale.exceptions
+from sale.location import Location
 from datetime import datetime
 from users_b.models import User
 import bmemcached
-from utils import MemcacheWrapper
-#from distance_module.geo_feed_v2 import GeoFeed
-from utils import MinPQ
-from bid import Bid
+from sale.utils import MinPQ, MemcacheWrapper
+from sale.bid import Bid
 from django.http import QueryDict
 import pdb
 
@@ -37,7 +34,7 @@ def home(request):
     sale = Sale.objects.all()[0]
     sale2 = Sale.objects.all()[1]
     refLocation = Location(32.5903056,-85.5284747)
-    print sale.compareTo(sale2, refLocation)
+    print(sale.compareTo(sale2, refLocation))
     return HttpResponse("Welcome to the Sale Model App")
 
 

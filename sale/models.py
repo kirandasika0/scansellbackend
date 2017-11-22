@@ -1,6 +1,6 @@
 from django.db import models
-from location import Location
-from haversine_km import haversine_km
+from sale.location import Location
+from sale.haversine_km import haversine_km
 # Create your models here.
 # main sale model where the user can set the price of the book they are gonna
 # sell
