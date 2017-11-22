@@ -42,15 +42,6 @@ def password_generator(password):
     return hashPassword[1]
 
 
-
-
-
-
-
-
-
-
-
 def sort_usernames(users):
     ''' Sorts all the usernames in ascending order.
     Keyword-args:
