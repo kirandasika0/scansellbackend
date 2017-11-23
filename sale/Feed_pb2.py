@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='Feed.proto',
   package='sale',
   syntax='proto2',
-  serialized_pb=_b('\n\nFeed.proto\x12\x04sale\"Z\n\x04\x42ook\x12\n\n\x02id\x18\x01 \x02(\x03\x12\x12\n\nfull_title\x18\x02 \x01(\t\x12\x0c\n\x04link\x18\x03 \x01(\t\x12\x15\n\runiform_title\x18\x04 \x01(\t\x12\r\n\x05\x65\x61n13\x18\x05 \x01(\t\"b\n\tSaleImage\x12\x1b\n\x07sale_id\x18\x01 \x02(\x0b\x32\n.sale.Sale\x12\x10\n\x08img_type\x18\x02 \x01(\t\x12\x12\n\nimage_name\x18\x03 \x01(\t\x12\x12\n\ncreated_at\x18\x04 \x01(\x05\"\x9d\x02\n\x04Sale\x12\n\n\x02id\x18\x01 \x02(\x03\x12\x11\n\tseller_id\x18\x02 \x02(\t\x12\x17\n\x0fseller_username\x18\x03 \x01(\t\x12\x18\n\x04\x62ook\x18\x04 \x01(\x0b\x32\n.sale.Book\x12\x12\n\ndesription\x18\x05 \x01(\t\x12\r\n\x05price\x18\x06 \x01(\t\x12\x10\n\x08location\x18\x07 \x01(\t\x12\x10\n\x08latitude\x18\x08 \x01(\x01\x12\x11\n\tlongitude\x18\t \x01(\x01\x12\x0c\n\x04sold\x18\n \x01(\x08\x12\x12\n\ncategories\x18\x0b \x01(\t\x12\x12\n\ncreated_at\x18\x0c \x01(\x05\x12\x12\n\nextra_info\x18\r \x01(\t\x12\x1f\n\x06images\x18\x0e \x03(\x0b\x32\x0f.sale.SaleImage\"!\n\x04\x46\x65\x65\x64\x12\x19\n\x05sales\x18\x01 \x03(\x0b\x32\n.sale.Sale')
+  serialized_pb=_b('\n\nFeed.proto\x12\x04sale\"Z\n\x04\x42ook\x12\n\n\x02id\x18\x01 \x02(\x03\x12\x12\n\nfull_title\x18\x02 \x01(\t\x12\x0c\n\x04link\x18\x03 \x01(\t\x12\x15\n\runiform_title\x18\x04 \x01(\t\x12\r\n\x05\x65\x61n13\x18\x05 \x01(\t\"V\n\tSaleImage\x12\x0f\n\x07sale_id\x18\x01 \x02(\x03\x12\x10\n\x08img_type\x18\x02 \x01(\t\x12\x12\n\nimage_name\x18\x03 \x01(\t\x12\x12\n\ncreated_at\x18\x04 \x01(\x05\"\x9d\x02\n\x04Sale\x12\n\n\x02id\x18\x01 \x02(\x03\x12\x11\n\tseller_id\x18\x02 \x02(\t\x12\x17\n\x0fseller_username\x18\x03 \x01(\t\x12\x18\n\x04\x62ook\x18\x04 \x01(\x0b\x32\n.sale.Book\x12\x12\n\ndesription\x18\x05 \x01(\t\x12\r\n\x05price\x18\x06 \x01(\t\x12\x10\n\x08location\x18\x07 \x01(\t\x12\x10\n\x08latitude\x18\x08 \x01(\x01\x12\x11\n\tlongitude\x18\t \x01(\x01\x12\x0c\n\x04sold\x18\n \x01(\x08\x12\x12\n\ncategories\x18\x0b \x01(\t\x12\x12\n\ncreated_at\x18\x0c \x01(\x05\x12\x12\n\nextra_info\x18\r \x01(\t\x12\x1f\n\x06images\x18\x0e \x03(\x0b\x32\x0f.sale.SaleImage\"!\n\x04\x46\x65\x65\x64\x12\x19\n\x05sales\x18\x01 \x03(\x0b\x32\n.sale.Sale')
 )
 
 
@@ -93,8 +93,8 @@ _SALEIMAGE = _descriptor.Descriptor(
   fields=[
     _descriptor.FieldDescriptor(
       name='sale_id', full_name='sale.SaleImage.sale_id', index=0,
-      number=1, type=11, cpp_type=10, label=2,
-      has_default_value=False, default_value=None,
+      number=1, type=3, cpp_type=2, label=2,
+      has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
@@ -132,7 +132,7 @@ _SALEIMAGE = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=112,
-  serialized_end=210,
+  serialized_end=198,
 )
 
 
@@ -253,8 +253,8 @@ _SALE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=213,
-  serialized_end=498,
+  serialized_start=201,
+  serialized_end=486,
 )
 
 
@@ -284,11 +284,10 @@ _FEED = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=500,
-  serialized_end=533,
+  serialized_start=488,
+  serialized_end=521,
 )
 
-_SALEIMAGE.fields_by_name['sale_id'].message_type = _SALE
 _SALE.fields_by_name['book'].message_type = _BOOK
 _SALE.fields_by_name['images'].message_type = _SALEIMAGE
 _FEED.fields_by_name['sales'].message_type = _SALE

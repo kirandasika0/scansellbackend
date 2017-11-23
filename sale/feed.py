@@ -215,7 +215,7 @@ class GeoFeed(object):
             sale_images = SaleImage.objects.filter(sale=temp_sale)
             for image in sale_images:
                 sale_image = Feed_pb2.SaleImage()
-                sale_image.sale_id.MergeFrom(sale)
+                sale_image.sale_id = sale.id
                 sale_image.img_type = image.img_type
                 sale_image.image_name = image.image_name
 

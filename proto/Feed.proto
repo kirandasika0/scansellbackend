@@ -11,7 +11,7 @@ message Book {
 }
 
 message SaleImage {
-    required Sale sale_id = 1;
+    required int64 sale_id = 1;
     optional string img_type = 2;
     optional string image_name = 3;
     optional int32 created_at = 4;

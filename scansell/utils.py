@@ -3,6 +3,7 @@ import json
 from django.http import HttpResponse
 
 CONTENT_TYPE = "application/json"
+STREAM = "application/octet-stream"
 
 class ServeResponse(object):
     """ Generic response for Quicksell API. """
@@ -18,7 +19,7 @@ class ServeResponse(object):
         if type(data) is str or type(data) is unicode:
             try:
                 if kwargs["is_proto"]:
-                    return HttpResponse(data, status=status_code)
+                    return HttpResponse(data, status=status_code, content_type=STREAM)
             except KeyError:
                 pass
                 
