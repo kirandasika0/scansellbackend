@@ -2,8 +2,8 @@ import json
 import pdb
 import requests
 import redis
-import sale.exceptions
 import bmemcached
+import sale.exceptions
 from datetime import datetime
 
 from django.http import QueryDict
@@ -23,8 +23,10 @@ from sale.bid import Bid
 from sale.location import Location
 from sale.notifications import Notification
 from sale.utils import MinPQ, MemcacheWrapper
+from sale.exceptions import UserForIDNotFoundException
 from sale.feed import generate_feed, get_relative_feed
 from sale.models import Sale, SaleInterest, SaleImage, SaleNotification
+
 
 # creating a new redis server
 r = redis.Redis(host='pub-redis-18592.us-east-1-2.4.ec2.garantiadata.com',
@@ -102,33 +104,6 @@ def create_locale(request):
         return HttpResponse(json.dumps({'response': 'please send the correct request'}),
                             content_type="application/json")
 
-@csrf_exempt
-def get_feed(request):
-    if request.method == 'GET':
-        #get all the posts from the data base
-        user_id = request.GET.get('user_id', "")
-        if user_id:
-            try:
-                user_notifications = len(SaleNotification.objects.filter(user_id=user_id))
-            except (SaleNotification.DoesNotExist) as e:
-                user_notifications = 0
-            data = []
-            #check if there in memcache
-            data = generate_feed(user_id)
-            # try:
-            #     data = generate_feed(user_id)
-            # except (exceptions.UserForIDNotFoundException) as e:
-            #     data.append({'error': str(e)})
-            response = {'response': data,
-                        'current_app_version': '1.0.1',
-                        'user_notifications_number': user_notifications}
-            return HttpResponse(json.dumps(response, indent=4), content_type="application/json")
-        else:
-            return HttpResponse(json.dumps({'response': 'please provide a user_id'}),
-                                content_type="application/json")
-    else:
-        return HttpResponse(json.dumps({'response': 'Please send the correct request'}),
-                            content_type="application/json")
 
 @csrf_exempt
 def sale_notification(request):
@@ -440,7 +415,7 @@ class CreateSaleView(View):
 class SaleInterestView(View):
     """ View to update a user's interest on a certain sale. """
     def get(self, request):
-        return ServeResponse.serve_error("GET not allowed.", 403)
+        return ServeResponse.serve_error("GET not allowed.", 405)
 
     def post(self, request):
         buyer_id = request.POST.get('buyer_id', "")
@@ -462,3 +437,25 @@ class SaleInterestView(View):
             return ServeResponse.serve_response(serializers.serialize("json", [interest])[1:-1], 201)
 
         return ServeResponse.serve_error("error while creating response.", 500)
+
+
+class FeedView(View):
+    """ Generates a personalised feed for each user. """
+
+    def get(self, request):
+        user_id = request.GET.get('user_id', "")
+        assert(user_id)
+        if user_id:
+            try:
+                user_notifications = len(SaleNotification.objects.filter(user_id=user_id))
+            except (SaleNotification.DoesNotExist) as e:
+                user_notifications = 0
+            try:
+                data = generate_feed(user_id)
+            except UserForIDNotFoundException:
+                return ServeResponse.serve_error("user_id not found", 500)
+
+            response = {'response': data,
+                        'current_app_version': '1.0.1',
+                        'user_notifications_number': user_notifications}
+            return ServeResponse.serve_response(response, 200)

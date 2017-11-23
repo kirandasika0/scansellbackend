@@ -8,7 +8,7 @@ urlpatterns = [
     url(r'^new_sale_insert/', views.new_sale_insert),
     url(r'^redis_test/', views.redis_test),
     url(r'^create_locale/', views.create_locale),
-    url(r'^get_feed/', views.get_feed),
+    url(r'^get_feed/', views.FeedView.as_view()),
     url(r'^sale_notification/', views.sale_notification),
     url(r'^get_notifications/', views.get_notifications),
     url(r'^delete_notification/', views.delete_notification),
