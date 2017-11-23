@@ -457,4 +457,4 @@ class FeedView(View):
             # response = {'response': feed.serialize_proto(),
             #             'current_app_version': '1.0.1',
             #             'user_notifications_number': user_notifications}
-            return ServeResponse.serve_response(feed.serialize_proto(is_json=True), 200)
+            return ServeResponse.serve_response(feed.serialize(), 200)
