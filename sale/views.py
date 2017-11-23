@@ -1,24 +1,30 @@
+import json
+import pdb
+import requests
+import redis
+import sale.exceptions
+import bmemcached
+from datetime import datetime
+
+from django.http import QueryDict
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.core import serializers
+from django.views.generic import View
 from django.views.decorators.csrf import csrf_exempt
-from .models import Sale, SaleInterest, SaleImage, SaleNotification
-from search.models import Book
-import json, requests
-import redis
-from .feed import generate_feed, get_relative_feed
-from django.core import serializers
-from sale.notifications import Notification
-from django.core import serializers
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.serializers.json import DjangoJSONEncoder
-import sale.exceptions
-from sale.location import Location
-from datetime import datetime
+
+from search.models import Book
 from users_b.models import User
-import bmemcached
-from sale.utils import MinPQ, MemcacheWrapper
+from scansell.utils import ServeResponse
+
 from sale.bid import Bid
-from django.http import QueryDict
-import pdb
+from sale.location import Location
+from sale.notifications import Notification
+from sale.utils import MinPQ, MemcacheWrapper
+from sale.feed import generate_feed, get_relative_feed
+from sale.models import Sale, SaleInterest, SaleImage, SaleNotification
 
 # creating a new redis server
 r = redis.Redis(host='pub-redis-18592.us-east-1-2.4.ec2.garantiadata.com',
@@ -50,111 +56,6 @@ def title_case_string(request):
                             content_type="application/json")
 
 @csrf_exempt
-def new_sale(request):
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        seller_id   = data["seller_id"]
-        seller_username = data["seller_username"]
-        book_id = data["book_id"]
-        location = data["location"]
-        description = data["description"]
-        price = data["price"]
-        latitude = data["latitude"]
-        longitude = data["longitude"]
-        selected_categories = data["selected_categories"]
-        geo_point = str(latitude) + "," + str(longitude)
-        if book_id or book_id is 0:
-            #book is not there please enter the details of the book
-            #sending message back to client for uploading contents of book
-            #getting the required data
-            full_title = data["full_title"]
-            link = ""
-            uniform_title = data["uniform_title"]
-            ean_13 = data["barcode_number"]
-            new_book = Book.objects.create(full_title=full_title,
-                                            link=link,
-                                            uniform_title=uniform_title,
-                                            ean_13=ean_13)
-            new_book.save()
-            #the book is now saved we have to save the sale and enter it in
-            #the correct redis bucket for the user
-            sale = Sale.objects.create(seller_id=seller_id, seller_username=seller_username,
-                                book=new_book, description=description, price=price,
-                                location=location, geo_point=geo_point,
-                                categories=json.dumps(selected_categories))
-            sale.save()
-            #we have to create the images
-            #front cover image
-            front_cover_image = data["front_cover_image"]
-            first_cover_image = data["first_cover_image"]
-            back_cover_image = data["back_cover_image"]
-            #saving all the sale images
-            img_names = [front_cover_image, first_cover_image, back_cover_image]
-            #img types
-            img_types = ['front', 'first', 'back']
-            imgs = zip(img_types, img_names)
-            for img in imgs:
-                SaleImage.objects.create(sale=sale, img_type=img[0],
-                                        image_name=img[1])
-            # saving this in the memcached for the required users
-            memcached_response = {
-                'id': sale.id, 'seller_id': sale.seller_id,
-                'seller_username': sale.seller_username,
-                'description': sale.description,
-                'book': json.loads(serializers.serialize("json", [sale.book])[1:-1]),
-                'price': sale.price,
-                'location': sale.location,
-                'latitude': latitude,
-                'longitude': longitude,
-                'images': json.loads(serializers.serialize("json",SaleImage.objects.filter(sale=sale))),
-                'extra_info': sale.location
-            }
-            # check for which users we have to insert it
-            # user = User.objects.get(user_id=sale.seller_id)
-            # user_locale = user.locale.split(',')
-            # user_locale.reverse()
-            # user_locality = user_locale[1]
-            # other_users = User.objects.all()
-            # for o_user in other_users:
-            #     o_user_locale = o_user.locale.split(',')
-            #     o_user_locale.reverse()
-            #     o_user_locality = o_user_locale[1]
-            #
-            #     if user_locality == o_user_locality:
-            #         # the two locality are equal now we can insert in the memcache
-            #         memcache.append_data_to_key(sale.seller_id, memcached_response)
-            response = {'response': 'Your Sale has been created'}
-            return HttpResponse(json.dumps(response),
-                                content_type="application/json")
-    else:
-        return HttpResponse(json.dumps({'response': 'please send the correct request'}),
-                            content_type="application/json")
-
-
-
-#view for new sale interest
-@csrf_exempt
-def new_sale_interest(request):
-    if request.method == 'POST':
-        buyer_id = request.POST.get('buyer_id', "")
-        buyer_username = request.POST.get('buyer_username', "")
-        sale_id = request.POST.get('sale_id', "")
-        if buyer_id and buyer_username and sale_id:
-            #get the sale object and then enter it in the database
-            sale = Sale.objects.get(pk=sale_id)
-            #creating the new sale interest object
-            SaleInterest.objects.create(interested_user_id=buyer_id,
-                                        interested_username=buyer_username,
-                                        sale=sale)
-        else:
-            return HttpResponse(json.dumps({'reponse': 'Please send the correct data to the server'}),
-                                content_type="application/json")
-    else:
-        return HttpResponse(json.dumps({'response': 'Please send the correct request'}),
-                            content_type="application/json")
-
-
-@csrf_exempt
 def new_sale_insert(request):
     if request.method == 'POST':
         return HttpResponse(json.dumps({'response': 0}),
@@ -166,9 +67,6 @@ def new_sale_insert(request):
 
 def redis_test(request):
     return HttpResponse("redis cache")
-
-
-
 
 @csrf_exempt
 def create_locale(request):
@@ -477,3 +375,98 @@ def getAlikeProduct(request):
     else:
         return HttpResponse(json.dumps({'response':'Please send a POST request'}),
                             content_type="application/json")
+
+
+################## CLASS BASED VIEWS START HERE ##################
+class CreateSaleView(View):
+    """ Simple cbv to create a new sale. """
+
+    def get(self, request):
+        return ServeResponse.serve_error("GET not allowed.", 403)
+
+    def post(self, request):
+        data = json.loads(request.body)
+        seller_id   = data["seller_id"]
+        seller_username = data["seller_username"]
+        book_id = data["book_id"]
+        location = data["location"]
+        description = data["description"]
+        price = data["price"]
+        latitude = data["latitude"]
+        longitude = data["longitude"]
+        selected_categories = data["selected_categories"]
+        geo_point = str(latitude) + "," + str(longitude)
+        if book_id or book_id is 0:
+            #book is not there please enter the details of the book
+            #sending message back to client for uploading contents of book
+            #getting the required data
+            full_title = data["full_title"]
+            link = ""
+            uniform_title = data["uniform_title"]
+            ean_13 = data["barcode_number"]
+            new_book = Book.objects.create(full_title=full_title,
+                                            link=link,
+                                            uniform_title=uniform_title,
+                                            ean_13=ean_13)
+            new_book.save()
+            #the book is now saved we have to save the sale and enter it in
+            #the correct redis bucket for the user
+            sale = Sale.objects.create(seller_id=seller_id, seller_username=seller_username,
+                                book=new_book, description=description, price=price,
+                                location=location, geo_point=geo_point,
+                                categories=json.dumps(selected_categories))
+            sale.save()
+            #we have to create the images
+            #front cover image
+            front_cover_image = data["front_cover_image"]
+            first_cover_image = data["first_cover_image"]
+            back_cover_image = data["back_cover_image"]
+            #saving all the sale images
+            img_names = [front_cover_image, first_cover_image, back_cover_image]
+            #img types
+            img_types = ['front', 'first', 'back']
+            imgs = zip(img_types, img_names)
+            for img in imgs:
+                SaleImage.objects.create(sale=sale, img_type=img[0],
+                                        image_name=img[1])
+            # saving this in the memcached for the required users
+            memcached_response = {
+                'id': sale.id, 'seller_id': sale.seller_id,
+                'seller_username': sale.seller_username,
+                'description': sale.description,
+                'book': json.loads(serializers.serialize("json", [sale.book])[1:-1]),
+                'price': sale.price,
+                'location': sale.location,
+                'latitude': latitude,
+                'longitude': longitude,
+                'images': json.loads(serializers.serialize("json",SaleImage.objects.filter(sale=sale))),
+                'extra_info': sale.location
+            }
+            return ServeResponse.serve_response({"status": 201, "response": "sale created."}, 201)
+
+
+class SaleInterestView(View):
+    """ View to update a user's interest on a certain sale. """
+    def get(self, request):
+        return ServeResponse.serve_error("GET not allowed.", 403)
+
+    def post(self, request):
+        buyer_id = request.POST.get('buyer_id', "")
+        buyer_username = request.POST.get('buyer_username', "")
+        sale_id = request.POST.get('sale_id', "")
+        if buyer_id and buyer_username and sale_id:
+            #get the sale object and then enter it in the database
+            if len(SaleInterest.objects.filter(interested_user_id=buyer_id, sale_id=sale_id)) > 0:
+                return ServeResponse.serve_error("interest already exists.", 403)
+
+            try:
+                sale = Sale.objects.get(pk=sale_id)
+            except ObjectDoesNotExist:
+                return ServeResponse.serve_error("sale does not exist", 500)
+            #creating the new sale interest object
+            interest = SaleInterest.objects.create(interested_user_id=buyer_id,
+                                            interested_username=buyer_username,
+                                            sale=sale)
+            return ServeResponse.serve_response(serializers.serialize("json", [interest])[1:-1], 201)
+
+        return ServeResponse.serve_error("error while creating response.", 500)
