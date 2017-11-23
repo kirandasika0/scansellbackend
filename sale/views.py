@@ -454,7 +454,7 @@ class FeedView(View):
             user = User.objects.get(user_id=user_id)
             feed = GeoFeed(user=user)
             
-            response = {'response': feed.serialize,
+            response = {'response': feed.serialize(),
                         'current_app_version': '1.0.1',
                         'user_notifications_number': user_notifications}
             return ServeResponse.serve_response(response, 200)
