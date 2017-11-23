@@ -24,7 +24,7 @@ from sale.location import Location
 from sale.notifications import Notification
 from sale.utils import MinPQ, MemcacheWrapper
 from sale.exceptions import UserForIDNotFoundException
-from sale.feed import generate_feed, get_relative_feed
+from sale.feed import generate_feed, get_relative_feed, GeoFeed
 from sale.models import Sale, SaleInterest, SaleImage, SaleNotification
 
 
@@ -450,12 +450,15 @@ class FeedView(View):
                 user_notifications = len(SaleNotification.objects.filter(user_id=user_id))
             except (SaleNotification.DoesNotExist) as e:
                 user_notifications = 0
-            try:
-                data = generate_feed(user_id)
-            except UserForIDNotFoundException:
-                return ServeResponse.serve_error("user_id not found", 500)
+            # try:
+            #     data = generate_feed(user_id)
+            # except UserForIDNotFoundException:
+            #     return ServeResponse.serve_error("user_id not found", 500)
 
-            response = {'response': data,
+            user = User.objects.get(user_id=user_id)
+            feed = GeoFeed(user=user)
+            
+            response = {'response': feed.serialize(),
                         'current_app_version': '1.0.1',
                         'user_notifications_number': user_notifications}
             return ServeResponse.serve_response(response, 200)

@@ -1,10 +1,14 @@
-import redis
-from .models import Sale, SaleImage
-from users_b.models import User
-from django.core import serializers
-from search.models import Book
 import json
+import redis
+
+from django.core import serializers
+
+from users_b.models import User
+from search.models import Book
 from sale.exceptions import UserForIDNotFoundException
+
+from .models import Sale, SaleImage
+
 # Creating new redis server
 r = redis.Redis(host='pub-redis-18592.us-east-1-2.4.ec2.garantiadata.com',
                 port=18592,
@@ -27,10 +31,13 @@ def place_sale(sale, locale):
 def generate_feed(user_id):
     user_id = str(user_id)
     user_redis_key = user_id + "_feed"
+
+    # Raise exception if user not found in database
     try:
         user = User.objects.get(user_id=user_id)
     except (User.DoesNotExist):
         raise UserForIDNotFoundException("user with id " + user_id + " not found.")
+    
     user_locale_list = user.locale
     user_locale = user.locale.split(',')
     # reversing the list
@@ -140,3 +147,70 @@ def get_relative_feed(user_id):
 def create_geofence(user_id="ME6lnbVxR9"):
     ''' this function will create a geofence for a user based on his location '''
     pass
+
+
+
+##################### NEW FEED ALGORITHM ########################
+class GeoFeed(object):
+    """ Class to represent the feed of books shown in the app. """
+
+    def __init__(self, user=None):
+        if user is None:
+            raise AttributeError("user is needed")
+        self.user = user
+        self.set_address()
+        # Long list of sales in the database
+        self.sales = list(Sale.objects.filter(sold = False))
+
+    def __iter__(self):
+        return self
+
+    def next(self):
+        """ Gives the next product in iterator. """
+        try:
+            current_sale = self.sales.pop()
+        except IndexError:
+            raise StopIteration
+        
+        sale_locality = self.get_address_list(current_sale.location)[-2]
+
+        if self.user_locality == sale_locality:
+            return current_sale
+
+        # Returning None if sale does not belong to user locality
+        return None
+    
+    def set_address(self):
+        self.user_address_list = self.get_address_list(self.user.locale)
+        self.user_locality = self.user_address_list[-2]
+
+    def get_address_list(self, address):
+        """ Get the address in a list form. """
+        return address.split(',')
+
+    def serialize_proto(self):
+        """ Use protobuf to serialize to bytes as its faster. """
+        pass
+    
+    def serialize(self):
+        serialized_data = []
+        for sale in self:
+            if sale is None:
+                continue
+            latitude, longitude = sale.geo_point.split(',')
+            images = serializers.serialize("json",
+                            SaleImage.objects.filter(sale_id=sale.id))
+            product_data = {'id': sale.id, 'seller_id': sale.seller_id,
+                            'seller_username': sale.seller_username,
+                            'description': sale.description,
+                            'book': json.loads(serializers.serialize("json", [sale.book])[1:-1]),
+                            'price': sale.price,
+                            'location': sale.location,
+                            'latitude': latitude,
+                            'longitude': longitude,
+                            'images': json.loads(images),
+                            'extra_info': determine_relation(self.user.locale, sale.location),
+                            'sold': sale.sold
+                            }
+            serialized_data.append(product_data)
+        return serialized_data
