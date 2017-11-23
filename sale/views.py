@@ -64,7 +64,6 @@ def new_sale_insert(request):
         return HttpResponse(json.dumps({'response': 'Please send the correct request'}),
                             content_type="application/json")
 
-
 def redis_test(request):
     return HttpResponse("redis cache")
 
@@ -103,7 +102,6 @@ def create_locale(request):
         return HttpResponse(json.dumps({'response': 'please send the correct request'}),
                             content_type="application/json")
 
-
 @csrf_exempt
 def get_feed(request):
     if request.method == 'GET':
@@ -131,7 +129,6 @@ def get_feed(request):
     else:
         return HttpResponse(json.dumps({'response': 'Please send the correct request'}),
                             content_type="application/json")
-
 
 @csrf_exempt
 def sale_notification(request):
@@ -197,8 +194,6 @@ def test_patch(request):
     else:
         return HttpResponse('Fuck you')
 
-
-
 @csrf_exempt
 def geo_feed_view(request):
     if request.method == 'GET':
@@ -244,7 +239,6 @@ def geo_feedv2(request):
 def sliderFeed(request):
     pass
 
-
 @csrf_exempt
 def hotDeals(request):
     if request.method == 'POST':
@@ -269,7 +263,6 @@ def hotDeals(request):
     else:
         return HttpResponse(json.dumps({'response': 'Only POST requests are allowed.'}),
                             content_type="application/json")
-
 
 # Helper methods
 @csrf_exempt
@@ -302,7 +295,6 @@ def markSold(request):
         return HttpResponse(json.dumps({'response': 'Only POST requests.'}),
                             content_type="application/json")
 # END HELPER METHODS
-
 
 @csrf_exempt
 def placeBid(request):

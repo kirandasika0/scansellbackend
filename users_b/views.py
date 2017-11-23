@@ -1,43 +1,30 @@
 import json
 import bmemcached
+from datetime import datetime
+
+from django.http import QueryDict
+from django.core import serializers
 from django.shortcuts import render
 from django.http import HttpResponse
-from .models import User
-from django.views.decorators.csrf import csrf_exempt
-from sale.utils import MemcacheWrapper
-from sale.models import Sale
-from datetime import datetime
-from .utils import id_generator, create_locale, password_generator, sort_usernames, contains_user
-from django.core import serializers
-from django.http import QueryDict
 from django.views.generic import View
+from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import ObjectDoesNotExist
+
+from sale.models import Sale
+from sale.utils import MemcacheWrapper
 from scansell.utils import ServeResponse
+
+from .models import User
 from .forms import UserSignupForm
-#creating an instance of Memcache here
+from .utils import id_generator, create_locale, password_generator, sort_usernames, contains_user
+
+# Creating an instance of Memcache here
 mc = bmemcached.Client('pub-memcache-10484.us-east-1-1.2.ec2.garantiadata.com:10484',
                         'saikiran',
                         'Skd30983')
 memcache = MemcacheWrapper(mc)
-# Create your views here.
-@csrf_exempt
-def update_location(request):
-    if request.method == 'POST':
-        user_id = request.POST.get('user_id')
-        memcache_key = request.POST.get('memcache_key')
-        latitude = request.POST.get('latitude')
-        longitude = request.POST.get('longitude')
-        created_at = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        if memcache.get_val(memcache_key):
-            memcache.append_data_to_key(memcache_key, (latitude, longitude, created_at))
-            return HttpResponse(json.dumps({'response': 'done'}), content_type="application/json")
-        else:
-            memcache.set_key_value(memcache_key, (latitude, longitude, created_at))
-            return HttpResponse(json.dumps({'response': 'done'}), content_type="appliaction/json")
-    else:
-        return HttpResponse(json.dumps({'response': 'please send data.'}),
-                            content_type="application/json")
 
+# Create your views here.
 @csrf_exempt
 def mySales(request):
     if request.method == 'POST':
@@ -93,6 +80,7 @@ class SignupView(View):
 
         return ServeResponse.serve_response({'response': True}, 200)
 
+
 class LoginView(View):
     """ Main login view for all users. """
 
@@ -117,21 +105,20 @@ class LoginView(View):
 
 
 class UpdateLocationView(View):
-    """ Updates user location each time he opens the app. """
+    """ Updates the user location everytime user opens the app. """
 
     def get(self, request):
-        return ServeResponse.serve_error("GET not allowed", 403)
-    
+        return ServeResponse.serve_error("GET not allowed.", 500)
+
     def post(self, request):
         user_id = request.POST.get('user_id')
         memcache_key = request.POST.get('memcache_key')
         latitude = request.POST.get('latitude')
         longitude = request.POST.get('longitude')
         created_at = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-
         if memcache.get_val(memcache_key):
             memcache.append_data_to_key(memcache_key, (latitude, longitude, created_at))
-            return ServeResponse.serve_response({"response": True}, 200)
+        else:
+            memcache.set_key_value(memcache_key, (latitude, longitude, created_at))
         
-        memcache.set_key_value(memcache_key, (latitude, longitude, created_at))
-        return ServeResponse.serve_response({"response": True}, 200)
+        return ServeResponse.serve_response({"status": 200, "info": "updated"}, 200)
