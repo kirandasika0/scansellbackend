@@ -10,12 +10,18 @@ class ServeResponse(object):
         pass
     
     @staticmethod
-    def serve_response(data, status_code, *args):
+    def serve_response(data, status_code, *args, **kwargs):
         """ serve_response is for serving a successful response. """
         if data is None or status_code is None:
             raise ValueError("Provide data and status code.")
         
         if type(data) is str or type(data) is unicode:
+            try:
+                if kwargs["is_proto"]:
+                    return HttpResponse(data, status=status_code)
+            except KeyError:
+                pass
+                
             return HttpResponse(data, content_type=CONTENT_TYPE,
                                 status=status_code)
 

@@ -1,5 +1,8 @@
 import json
 import redis
+import Feed_pb2
+
+from google.protobuf import json_format
 
 from django.core import serializers
 
@@ -188,9 +191,42 @@ class GeoFeed(object):
         """ Get the address in a list form. """
         return address.split(',')
 
-    def serialize_proto(self):
+    def serialize_proto(self, is_json=False):
         """ Use protobuf to serialize to bytes as its faster. """
-        pass
+        feed = Feed_pb2.Feed()
+        for temp_sale in self:
+            # Continue iteration if None occurs
+            if temp_sale is None:
+                continue
+            # Add sale object to feed protobuf
+            sale = Feed_pb2.Sale()
+            sale.id = temp_sale.pk
+            sale.seller_id = temp_sale.seller_id
+            sale.seller_username = temp_sale.seller_username
+            # Sale book
+            temp_sale_book = temp_sale.book
+            sale.book.id = temp_sale_book.pk
+            sale.book.full_title = temp_sale_book.full_title
+            sale.book.link = temp_sale.book.link
+            sale.book.uniform_title = temp_sale_book.uniform_title
+            sale.book.ean13 = temp_sale_book.ean_13
+
+            # Sale Images
+            sale_images = SaleImage.objects.filter(sale=temp_sale)
+            for image in sale_images:
+                sale_image = Feed_pb2.SaleImage()
+                sale_image.sale_id.MergeFrom(sale)
+                sale_image.img_type = image.img_type
+                sale_image.image_name = image.image_name
+
+                # Append to sale.images
+                sale.images.extend([sale_image])
+
+            feed.sales.extend([sale])
+
+        if is_json:
+            return json_format.MessageToJson(feed)
+        return feed.SerializeToString()
     
     def serialize(self):
         serialized_data = []

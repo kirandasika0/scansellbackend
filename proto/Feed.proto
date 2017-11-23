@@ -1,0 +1,39 @@
+syntax = "proto2";
+
+package sale;
+
+message Book {
+    required int64 id = 1;
+    optional string full_title = 2;
+    optional string link = 3;
+    optional string uniform_title = 4;
+    optional string ean13 = 5;
+}
+
+message SaleImage {
+    required Sale sale_id = 1;
+    optional string img_type = 2;
+    optional string image_name = 3;
+    optional int32 created_at = 4;
+}
+
+message Sale {
+    required int64 id = 1;
+    required string seller_id = 2;
+    optional string seller_username = 3;
+    optional Book book = 4;
+    optional string desription = 5;
+    optional string price = 6;
+    optional string location = 7;
+    optional double latitude = 8;
+    optional double longitude = 9;
+    optional bool sold = 10;
+    optional string categories = 11;
+    optional int32 created_at = 12;
+    optional string extra_info = 13;
+    repeated SaleImage images = 14;
+}
+
+message Feed {
+    repeated Sale sales = 1;
+}
