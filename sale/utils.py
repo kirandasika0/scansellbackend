@@ -1,17 +1,19 @@
-import pprint
 import pdb
 import time
-import bmemcached
-from datetime import datetime
-from json import dumps, loads
+import pprint
 from hashlib import sha224
+from random import randint
+from json import dumps, loads
+from datetime import datetime
+from collections import defaultdict
+
+import bmemcached
+from firebase import firebase
+
 from .models import Sale
-from .haversine_km import haversine_km
 from .location import Location
 from .models import Sale
-from collections import defaultdict
-from random import randint
-from firebase import firebase
+from .haversine_km import haversine_km
 
 # this file will never connect to the memcache server directly
 # rather it will be passed an instance of the memcache client object

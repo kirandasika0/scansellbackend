@@ -1,10 +1,12 @@
 import json
 import pdb
+import time
 import requests
 import redis
 import bmemcached
 import sale.exceptions
 from datetime import datetime
+from hashlib import sha256
 
 from django.http import QueryDict
 from django.shortcuts import render
@@ -457,7 +459,12 @@ class FeedView(View):
             # For protobuf serialization
             try:
                 if int(request.GET["is_proto"]) == 1:
-                    return ServeResponse.serve_response(feed.serialize_proto(), 200, is_proto=True)
+                    # Memcache key
+                    key = sha256(user_id).hexdigest()
+                    if mc.get(key) is None:
+                        mc.set(key, feed.serialize_proto(), time=int(time.time() + 60))
+
+                    return ServeResponse.serve_response(mc.get(key), 200, is_proto=True)
             except KeyError:
                 pass
 
