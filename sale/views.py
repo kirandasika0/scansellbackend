@@ -454,7 +454,14 @@ class FeedView(View):
             user = User.objects.get(user_id=user_id)
             feed = GeoFeed(user=user)
             
-            # response = {'response': feed.serialize(),
-            #             'current_app_version': '1.0.1',
-            #             'user_notifications_number': user_notifications}
-            return ServeResponse.serve_response(feed.serialize_proto(), 200, is_proto=True)
+            # For protobuf serialization
+            try:
+                if int(request.GET["is_proto"]) == 1:
+                    return ServeResponse.serve_response(feed.serialize_proto(), 200, is_proto=True)
+            except KeyError:
+                pass
+
+            response = {'response': feed.serialize(),
+                        'current_app_version': '1.0.1',
+                        'user_notifications_number': user_notifications}
+            return ServeResponse.serve_response(response, 200)
