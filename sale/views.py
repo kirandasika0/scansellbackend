@@ -456,11 +456,13 @@ class FeedView(View):
             user = User.objects.get(user_id=user_id)
             feed = GeoFeed(user=user)
             
+            # Memcache key
+            key = sha256(user_id).hexdigest()
+
             # For protobuf serialization
             try:
                 if int(request.GET["is_proto"]) == 1:
-                    # Memcache key
-                    key = sha256(user_id).hexdigest()
+                    
                     if mc.get(key) is None:
                         mc.set(key, feed.serialize_proto(), time=int(time.time() + 60))
 
@@ -468,7 +470,11 @@ class FeedView(View):
             except KeyError:
                 pass
 
-            response = {'response': feed.serialize(),
+            if mc.get(key) is None:
+                response = {'response': feed.serialize(),
                         'current_app_version': '1.0.1',
                         'user_notifications_number': user_notifications}
-            return ServeResponse.serve_response(response, 200)
+                mc.set(key, response, time=int(time.time() + 90))
+                return ServeResponse.serve_response(response, 200)
+            
+            return ServeResponse.serve_response(mc.get(key), 200)
