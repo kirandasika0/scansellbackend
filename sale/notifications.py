@@ -1,11 +1,14 @@
 import json
 import time
-from .models import SaleNotification, Sale
-from search.models import Book
+
 from django.core import serializers
+
+from search.models import Book
 from users_b.models import User
+
+from .models import SaleNotification, Sale
 ###########################################
-# All imports above this comment
+
 '''
 Defining all the notification types
 

@@ -4,9 +4,8 @@ import time
 import requests
 import redis
 import bmemcached
-import sale.exceptions
-from datetime import datetime
 from hashlib import sha256
+from datetime import datetime
 
 from django.http import QueryDict
 from django.shortcuts import render
@@ -21,9 +20,11 @@ from search.models import Book
 from users_b.models import User
 from scansell.utils import ServeResponse
 
+import sale.exceptions
 from sale.bid import Bid
 from sale.location import Location
-from sale.notifications import Notification
+# from sale.notifications import Notification
+from sale.notifications2 import Notification, BOOK_EMOJI, SALE_EMOJI
 from sale.utils import MinPQ, MemcacheWrapper
 from sale.exceptions import UserForIDNotFoundException
 from sale.feed import generate_feed, get_relative_feed, GeoFeed
@@ -455,14 +456,14 @@ class FeedView(View):
 
             user = User.objects.get(user_id=user_id)
             feed = GeoFeed(user=user)
-            
+
             # Memcache key
             key = sha256(user_id).hexdigest()
 
             # For protobuf serialization
             try:
                 if int(request.GET["is_proto"]) == 1:
-                    
+
                     if mc.get(key) is None:
                         mc.set(key, feed.serialize_proto(), time=int(time.time() + 60))
 
@@ -476,5 +477,17 @@ class FeedView(View):
                         'user_notifications_number': user_notifications}
                 mc.set(key, response, time=int(time.time() + 90))
                 return ServeResponse.serve_response(response, 200)
-            
+            #Default response if key is available
             return ServeResponse.serve_response(mc.get(key), 200)
+
+
+class NotificationView(View):
+    def get(self, request):
+        if request is None:
+            ServeResponse.serve_error("request needed", 500)
+        
+        user = User.objects.get(pk = request.GET['user_id'])
+        notification = Notification(user)
+        response = notification.build_notification(display_string=notification.build_notification_string('kirandasika', 'reviewed', 'your', 'book', EMOJI_TYPE=SALE_EMOJI))
+        return ServeResponse.serve_response(response, 200)
+        
