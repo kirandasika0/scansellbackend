@@ -479,15 +479,4 @@ class FeedView(View):
                 return ServeResponse.serve_response(response, 200)
             #Default response if key is available
             return ServeResponse.serve_response(mc.get(key), 200)
-
-
-class NotificationView(View):
-    def get(self, request):
-        if request is None:
-            ServeResponse.serve_error("request needed", 500)
-        
-        user = User.objects.get(pk = request.GET['user_id'])
-        notification = Notification(user)
-        response = notification.build_notification(display_string=notification.build_notification_string('kirandasika', 'reviewed', 'your', 'book', EMOJI_TYPE=SALE_EMOJI))
-        return ServeResponse.serve_response(response, 200)
         

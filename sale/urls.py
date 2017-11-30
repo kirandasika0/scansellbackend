@@ -22,5 +22,4 @@ urlpatterns = [
     url(r'bid_stats/', views.bidStats),
     url(r'mark_sold/', views.markSold),
     url(r'all_sales', views.allSales),
-    url(r'notification/', views.NotificationView.as_view()),
 ]
