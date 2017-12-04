@@ -23,11 +23,11 @@ from scansell.utils import ServeResponse
 import sale.exceptions
 from sale.bid import Bid
 from sale.location import Location
-# from sale.notifications import Notification
-from sale.notifications2 import Notification, BOOK_EMOJI, SALE_EMOJI
+from sale.notifications import Notification
 from sale.utils import MinPQ, MemcacheWrapper
 from sale.exceptions import UserForIDNotFoundException
 from sale.feed import generate_feed, get_relative_feed, GeoFeed
+# from sale.notifications2 import Notification, BOOK_EMOJI, SALE_EMOJI
 from sale.models import Sale, SaleInterest, SaleImage, SaleNotification
 
 
