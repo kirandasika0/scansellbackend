@@ -1,0 +1,9 @@
+syntax = "proto2";
+
+package chat;
+
+message Message {
+    required string id = 1;
+    required string message = 2;
+    required int32 timestamp = 3;
+}

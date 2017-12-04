@@ -192,7 +192,7 @@ class GeoFeed(object):
         return address.split(',')
 
     def serialize_proto(self, is_json=False):
-        """ Use protobuf to serialize to bytes as its faster. """
+        """ Using protobuf to serialize feed. """
         feed = Feed_pb2.Feed()
         for temp_sale in self:
             # Continue iteration if None occurs

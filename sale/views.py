@@ -463,11 +463,11 @@ class FeedView(View):
             # For protobuf serialization
             try:
                 if int(request.GET["is_proto"]) == 1:
-
                     if mc.get(key) is None:
                         mc.set(key, feed.serialize_proto(), time=int(time.time() + 60))
 
                     return ServeResponse.serve_response(mc.get(key), 200, is_proto=True)
+                
             except KeyError:
                 pass
 
