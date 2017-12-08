@@ -1,4 +1,9 @@
 from django.http import HttpResponse
 
 def index(request):
-    return HttpResponse("Welcome to Scan&Sell backend.", content_type="application/json")
+    if len(request.META) > 0:
+        try:
+            print request.META['HTTP_AUTHORIZATION']
+            return HttpResponse("quicksell api", content_type="application/json", status=200)
+        except KeyError:
+            return HttpResponse("quicksell api", content_type="application/json", status=403)

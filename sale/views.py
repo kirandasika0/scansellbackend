@@ -479,4 +479,3 @@ class FeedView(View):
                 return ServeResponse.serve_response(response, 200)
             #Default response if key is available
             return ServeResponse.serve_response(mc.get(key), 200)
-        
