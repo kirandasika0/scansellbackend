@@ -1,9 +1,6 @@
 from django.http import HttpResponse
+from django.shortcuts import render
 
 def index(request):
-    if len(request.META) > 0:
-        try:
-            print request.META['HTTP_AUTHORIZATION']
-            return HttpResponse("quicksell api", content_type="application/json", status=200)
-        except KeyError:
-            return HttpResponse("quicksell api", content_type="application/json", status=403)
+    """ Main index route """
+    return render(request, "index.html", {})

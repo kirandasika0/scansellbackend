@@ -80,7 +80,7 @@ class SaleInterest(models.Model):
 
 class SaleImage(models.Model):
     sale = models.ForeignKey('Sale')
-    img_type = models.CharField(default='', max_length='16')
+    img_type = models.CharField(default='', max_length=16)
     image_name = models.TextField()
     pub_date = models.DateTimeField(auto_now_add=True)
 
@@ -91,8 +91,8 @@ class SaleImage(models.Model):
 class SaleNotification(models.Model):
     ''' This is the main sale notification model to talk to the database'''
     notif_type = models.IntegerField()
-    user_id = models.CharField(max_length='255')
-    user_name = models.CharField(max_length='255')
+    user_id = models.CharField(max_length=255)
+    user_name = models.CharField(max_length=255)
     sale = models.ForeignKey('Sale')
     data = models.TextField()
     pub_date = models.DateTimeField(auto_now_add=True)
