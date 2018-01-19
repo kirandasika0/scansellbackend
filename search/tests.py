@@ -1,3 +1,6 @@
+import time
+from hashlib import sha256
+
 from django.test import TestCase
 
-# Create your tests here.
+from .models import Book

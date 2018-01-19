@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+    db:
+        image: mysql:latest
+        environment:
+            - MYSQL_ROOT_PASSWORD=password
+            - MYSQL_USER=root
+            - MYSQL_PASSWORD=password
+            - MYSQL_DATABASE=scansell
+    qsell-api:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        command: gunicorn --pythonpath scansell scansell.wsgi --log-file -
+        ports:
+            - "8000:8000"
+        depends_on:
+            - db
